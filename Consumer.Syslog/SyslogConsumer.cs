@@ -11,7 +11,7 @@ namespace Scriba.Consumers
         private SyslogUdpSender sender = null;
         private ISyslogMessageSerializer serializer = null;
         private readonly string machineName;
-        private string appName = "moba";
+        private string appName = "app";
         private static readonly char[] separators = { '\r', '\n' };
 
         private readonly System.IO.StringWriter mBuffer = new System.IO.StringWriter();
@@ -27,10 +27,6 @@ namespace Scriba.Consumers
                 serializer = new SyslogRfc3164MessageSerializer();
 
                 machineName = Environment.MachineName;
-                if (machineName == "localhost")
-                {
-                    machineName = "android";
-                }
 
                 try
                 {
