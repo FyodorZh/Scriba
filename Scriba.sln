@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Log", "Log\Log.csproj", "{F78A856B-CA97-4612-ABEF-162B9BA474A4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scriba", "Scriba\Scriba.csproj", "{F78A856B-CA97-4612-ABEF-162B9BA474A4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileLogConsumer", "FileLogConsumer\FileLogConsumer.csproj", "{D0C38C5F-AFA6-49CE-A5B5-0AFAC45F1C7B}"
 EndProject
@@ -8,7 +8,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogConsumer.Shared", "LogCo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogStashConsumers", "LogStashConsumers\LogStashConsumers.csproj", "{218CFC28-B17E-4F4A-90F4-5734956C31D5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SyslogConsumer", "SyslogConsumer\SyslogConsumer.csproj", "{277FB7BD-0419-4BC6-84C8-383416D0F6D1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Consumer.Syslog", "Consumer.Syslog\Consumer.Syslog.csproj", "{277FB7BD-0419-4BC6-84C8-383416D0F6D1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scriba.Test", "Scriba.Test\Scriba.Test.csproj", "{B91A95E4-3FCD-4A0D-B46F-415264390C56}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JsonFactory", "JsonFactory\JsonFactory.csproj", "{2E00EFDF-39C2-447A-9FE3-53FCFE34F32E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -36,5 +40,13 @@ Global
 		{277FB7BD-0419-4BC6-84C8-383416D0F6D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{277FB7BD-0419-4BC6-84C8-383416D0F6D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{277FB7BD-0419-4BC6-84C8-383416D0F6D1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B91A95E4-3FCD-4A0D-B46F-415264390C56}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B91A95E4-3FCD-4A0D-B46F-415264390C56}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B91A95E4-3FCD-4A0D-B46F-415264390C56}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B91A95E4-3FCD-4A0D-B46F-415264390C56}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2E00EFDF-39C2-447A-9FE3-53FCFE34F32E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2E00EFDF-39C2-447A-9FE3-53FCFE34F32E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2E00EFDF-39C2-447A-9FE3-53FCFE34F32E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2E00EFDF-39C2-447A-9FE3-53FCFE34F32E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -1,0 +1,42 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <LangVersion>9</LangVersion>
+    <Nullable>disable</Nullable>
+    <Version>0.1.1-dev.1</Version>
+    <Title>Scriba</Title>
+    <Authors>Fyodor Zhmaev</Authors>
+    <Description>Logging library with zero allocations</Description>
+    <Copyright>Copyright (c) Fyodor Zhmaev 2025</Copyright>
+    <PackageProjectUrl>https://github.com/FyodorZh/Scriba</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/FyodorZh/Scriba.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageReadmeFile>nuget.readme.md</PackageReadmeFile>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <PackageId>Scriba</PackageId>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="nuget.readme.md" Pack="true" PackagePath="\" />
+    <None Include="..\LICENSE" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\JsonFactory\JsonFactory.csproj" />
+  </ItemGroup>
+
+</Project>
