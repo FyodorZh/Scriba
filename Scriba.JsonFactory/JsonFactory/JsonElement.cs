@@ -1,28 +1,18 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace JsonFactory
+namespace Scriba.JsonFactory
 {
-    /// <summary>
-    /// PLT-4104, additional offset don't helped
-    /// </summary>
-#if !UNITY_ANDROID
+
     [StructLayout(LayoutKind.Explicit)]
-#endif
     public struct Union
     {
-#if !UNITY_ANDROID
         [FieldOffset(0)]
-#endif
         public bool BoolValue;
 
-#if !UNITY_ANDROID
         [FieldOffset(0)]
-#endif
         public long LongValue;
 
-#if !UNITY_ANDROID
         [FieldOffset(0)]
-#endif
         public double DoubleValue;
     }
 

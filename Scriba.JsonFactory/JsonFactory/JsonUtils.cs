@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace JsonFactory
+namespace Scriba.JsonFactory
 {
     public static class JsonUtils
     {

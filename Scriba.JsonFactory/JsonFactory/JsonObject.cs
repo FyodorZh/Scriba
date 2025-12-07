@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace JsonFactory
+namespace Scriba.JsonFactory
 {
     public interface IJsonObject
     {

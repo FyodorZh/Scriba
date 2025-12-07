@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace JsonFactory
+namespace Scriba.JsonFactory
 {
     internal static class Pool<TObject>
         where TObject : class, new()

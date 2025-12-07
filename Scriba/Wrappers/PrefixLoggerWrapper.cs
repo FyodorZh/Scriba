@@ -1,4 +1,4 @@
-﻿using JsonFactory;
+﻿using Scriba.JsonFactory;
 
 namespace Scriba
 {

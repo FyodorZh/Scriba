@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Text;
 
-namespace JsonFactory.Utils
+namespace Scriba.JsonFactory.Utils
 {
     internal sealed class TextFilter : TextWriter
     {

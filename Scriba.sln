@@ -12,7 +12,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Consumer.Syslog", "Consumer
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scriba.Test", "Scriba.Test\Scriba.Test.csproj", "{B91A95E4-3FCD-4A0D-B46F-415264390C56}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JsonFactory", "JsonFactory\JsonFactory.csproj", "{2E00EFDF-39C2-447A-9FE3-53FCFE34F32E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scriba.JsonFactory", "Scriba.JsonFactory\Scriba.JsonFactory.csproj", "{2E00EFDF-39C2-447A-9FE3-53FCFE34F32E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

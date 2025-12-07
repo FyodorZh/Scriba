@@ -1,7 +1,7 @@
-﻿using JsonFactory.Utils;
-using System.IO;
+﻿using System.IO;
+using Scriba.JsonFactory.Utils;
 
-namespace JsonFactory.ExternalJsons
+namespace Scriba.JsonFactory.ExternalJsons
 {
     public abstract class SimpleExternalJson : IExternalJson
     {

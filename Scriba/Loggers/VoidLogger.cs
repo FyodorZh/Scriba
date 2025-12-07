@@ -1,5 +1,5 @@
 ﻿using System;
-using JsonFactory;
+using Scriba.JsonFactory;
 
 namespace Scriba
 {

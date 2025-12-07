@@ -1,4 +1,4 @@
-﻿namespace JsonFactory
+﻿namespace Scriba.JsonFactory
 {
     /// <summary>
     /// Представляет внешний json объект произвольной формы

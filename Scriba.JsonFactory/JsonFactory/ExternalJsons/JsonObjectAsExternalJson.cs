@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace JsonFactory.ExternalJsons
+namespace Scriba.JsonFactory.ExternalJsons
 {
     public class JsonObjectAsExternalJson : SimpleExternalJson
     {

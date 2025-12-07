@@ -1,4 +1,4 @@
-﻿namespace JsonFactory
+﻿namespace Scriba.JsonFactory
 {
     public interface ILogExternalJsonFactory
     {
