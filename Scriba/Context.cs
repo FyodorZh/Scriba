@@ -207,7 +207,7 @@ namespace Scriba
                 }
             }
 
-            message.Free();
+            message.Dispose();
         }
 
         public void Destroy()

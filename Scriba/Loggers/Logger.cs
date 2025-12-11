@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Scriba
 {
-    internal class Logger : ILogger
+    public class Logger : ILogger
     {
         private readonly Context _context = new Context();
 

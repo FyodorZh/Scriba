@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Scriba.JsonFactory
 {
-    public interface IJsonObject
+    public interface IJsonObject : IDisposable
     {
         bool AddElement(string name, string value);
         bool AddElement(string name, string format, params object[] list);
@@ -13,10 +14,8 @@ namespace Scriba.JsonFactory
         IJsonObject AddObject(string name);
         IJsonArray AddArray(string name);
 
-        void Free();
-
         int Count { get; }
-        KeyValuePair<string, JsonElement> this[int id] { get; }
+        (string Name, JsonElement Filed) this[int id] { get; }
         JsonElement Get(string name);
     }
 
@@ -27,15 +26,15 @@ namespace Scriba.JsonFactory
             return Pool<JsonObject>.New();
         }
 
-        private readonly List<KeyValuePair<string, JsonElement>> mElements = new List<KeyValuePair<string, JsonElement>>();
+        private readonly List<(string Name, JsonElement Filed)> _elements = new ();
 
         public void Free()
         {
-            for (int i = 0; i < mElements.Count; ++i)
+            for (int i = 0; i < _elements.Count; ++i)
             {
-                mElements[i].Value.Free();
+                _elements[i].Filed.Free();
             }
-            mElements.Clear();
+            _elements.Clear();
             Pool<JsonObject>.Free(this);
         }
 
@@ -44,7 +43,7 @@ namespace Scriba.JsonFactory
             if (CheckName(name) && TryFind(name) < 0)
             {
                 JsonArray array = Pool<JsonArray>.New();
-                mElements.Add(new KeyValuePair<string, JsonElement>(name, new JsonElement(array)));
+                _elements.Add((name, new JsonElement(array)));
                 return array;
             }
             return null;
@@ -54,7 +53,7 @@ namespace Scriba.JsonFactory
         {
             if (CheckName(name) && TryFind(name) < 0)
             {
-                mElements.Add(new KeyValuePair<string, JsonElement>(name, new JsonElement(value)));
+                _elements.Add((name, new JsonElement(value)));
                 return true;
             }
             return false;
@@ -64,7 +63,7 @@ namespace Scriba.JsonFactory
         {
             if (CheckName(name) && TryFind(name) < 0)
             {
-                mElements.Add(new KeyValuePair<string, JsonElement>(name, new JsonElement(format, list)));
+                _elements.Add((name, new JsonElement(format, list)));
                 return true;
             }
             return false;
@@ -74,7 +73,7 @@ namespace Scriba.JsonFactory
         {
             if (CheckName(name) && TryFind(name) < 0)
             {
-                mElements.Add(new KeyValuePair<string, JsonElement>(name, new JsonElement(value)));
+                _elements.Add((name, new JsonElement(value)));
                 return true;
             }
             return false;
@@ -84,7 +83,7 @@ namespace Scriba.JsonFactory
         {
             if (CheckName(name) && TryFind(name) < 0)
             {
-                mElements.Add(new KeyValuePair<string, JsonElement>(name, new JsonElement(value)));
+                _elements.Add((name, new JsonElement(value)));
                 return true;
             }
             return false;
@@ -94,7 +93,7 @@ namespace Scriba.JsonFactory
         {
             if (CheckName(name) && TryFind(name) < 0)
             {
-                mElements.Add(new KeyValuePair<string, JsonElement>(name, new JsonElement(value)));
+                _elements.Add((name, new JsonElement(value)));
                 return true;
             }
             return false;
@@ -104,7 +103,7 @@ namespace Scriba.JsonFactory
         {
             if (CheckName(name) && TryFind(name) < 0)
             {
-                mElements.Add(new KeyValuePair<string, JsonElement>(name, new JsonElement(value)));
+                _elements.Add((name, new JsonElement(value)));
                 return true;
             }
             return false;
@@ -115,26 +114,20 @@ namespace Scriba.JsonFactory
             if (TryFind(name) < 0)
             {
                 JsonObject obj = Pool<JsonObject>.New();
-                mElements.Add(new KeyValuePair<string, JsonElement>(name, new JsonElement(obj)));
+                _elements.Add((name, new JsonElement(obj)));
                 return obj;
             }
             return null;
         }
 
-        void IJsonObject.Free()
+        void IDisposable.Dispose()
         {
             Free();
         }
 
-        int IJsonObject.Count
-        {
-            get { return mElements.Count; }
-        }
+        int IJsonObject.Count => _elements.Count;
 
-        KeyValuePair<string, JsonElement> IJsonObject.this[int id]
-        {
-            get { return mElements[id]; }
-        }
+        (string Name, JsonElement Filed) IJsonObject.this[int id] => _elements[id];
 
         JsonElement IJsonObject.Get(string name)
         {
@@ -143,7 +136,7 @@ namespace Scriba.JsonFactory
             {
                 return new JsonElement();
             }
-            return mElements[id].Value;
+            return _elements[id].Filed;
         }
 
         private bool CheckName(string name)
@@ -153,9 +146,9 @@ namespace Scriba.JsonFactory
 
         private int TryFind(string name)
         {
-            for (int i = 0; i < mElements.Count; ++i)
+            for (int i = 0; i < _elements.Count; ++i)
             {
-                if (mElements[i].Key == name)
+                if (_elements[i].Name == name)
                 {
                     return i;
                 }

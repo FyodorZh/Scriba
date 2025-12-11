@@ -43,8 +43,7 @@ namespace Scriba.JsonFactory
                             {
                                 string paramName = format.Substring(openBracketPos + 1, i - (openBracketPos + 1));
 
-                                int paramId;
-                                if (!int.TryParse(paramName, out paramId))
+                                if (!int.TryParse(paramName, out var paramId))
                                 {
                                     paramId = globalParamId++;
                                 }
@@ -54,8 +53,7 @@ namespace Scriba.JsonFactory
                                 {
                                     if (hasAt)
                                     {
-                                        IExternalJson nestedJson = list[paramId] as IExternalJson;
-                                        if (nestedJson != null)
+                                        if (list[paramId] is IExternalJson nestedJson)
                                         {
                                             res = self.AddElement(paramName, nestedJson);
                                         }
@@ -104,9 +102,9 @@ namespace Scriba.JsonFactory
                     output.Write(", ");
                 }
                 output.Write('"');
-                output.Write(kv.Key);
+                output.Write(kv.Name);
                 output.Write("\": ");
-                if (!kv.Value.WriteTo(output))
+                if (!kv.Filed.WriteTo(output))
                 {
                     return false;
                 }
@@ -133,8 +131,7 @@ namespace Scriba.JsonFactory
                     return false;
                 case ElementType.String:
                     {
-                        string value;
-                        if (!element.TryGet(out value))
+                        if (!element.TryGet(out string value))
                         {
                             return false;
                         }
@@ -152,9 +149,7 @@ namespace Scriba.JsonFactory
                     return true;
                 case ElementType.StringFormat:
                     {
-                        string format;
-                        object[] list;
-                        if (!element.TryGet(out format, out list))
+                        if (!element.TryGet(out var format, out var list))
                         {
                             return false;
                         }
@@ -168,8 +163,7 @@ namespace Scriba.JsonFactory
                     return true;
                 case ElementType.Number:
                     {
-                        double value;
-                        if (!element.TryGet(out value))
+                        if (!element.TryGet(out double value))
                         {
                             return false;
                         }
@@ -178,8 +172,7 @@ namespace Scriba.JsonFactory
                     return true;
                 case ElementType.Bool:
                     {
-                        bool value;
-                        if (!element.TryGet(out value))
+                        if (!element.TryGet(out bool value))
                         {
                             return false;
                         }
@@ -188,8 +181,7 @@ namespace Scriba.JsonFactory
                     return true;
                 case ElementType.Long:
                     {
-                        long value;
-                        if (!element.TryGet(out value))
+                        if (!element.TryGet(out long value))
                         {
                             return false;
                         }
@@ -198,8 +190,7 @@ namespace Scriba.JsonFactory
                     return true;
                 case ElementType.Json:
                     {
-                        IExternalJson value;
-                        if (!element.TryGet(out value))
+                        if (!element.TryGet(out IExternalJson value))
                         {
                             return false;
                         }
@@ -208,8 +199,7 @@ namespace Scriba.JsonFactory
                     return true;
                 case ElementType.Object:
                     {
-                        IJsonObject value;
-                        if (!element.TryGet(out value))
+                        if (!element.TryGet(out IJsonObject value))
                         {
                             return false;
                         }
@@ -221,8 +211,7 @@ namespace Scriba.JsonFactory
                     return true;
                 case ElementType.Array:
                     {
-                        IJsonArray value;
-                        element.TryGet(out value);
+                        element.TryGet(out IJsonArray value);
                         output.Write('[');
                         for (int j = 0; j < value.Count; ++j)
                         {

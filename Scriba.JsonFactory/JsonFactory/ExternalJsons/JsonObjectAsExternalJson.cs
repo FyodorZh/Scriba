@@ -4,12 +4,9 @@ namespace Scriba.JsonFactory.ExternalJsons
 {
     public class JsonObjectAsExternalJson : SimpleExternalJson
     {
-        private JsonObject mObject;
+        private JsonObject _object;
 
-        public IJsonObject Root
-        {
-            get { return mObject; }
-        }
+        public IJsonObject Root => _object;
 
         public JsonObjectAsExternalJson()
         {
@@ -18,9 +15,9 @@ namespace Scriba.JsonFactory.ExternalJsons
 
         public bool Reinit()
         {
-            if (mObject == null)
+            if (_object == null)
             {
-                mObject = Pool<JsonObject>.New();
+                _object = Pool<JsonObject>.New();
                 return true;
             }
             return false;
@@ -28,16 +25,16 @@ namespace Scriba.JsonFactory.ExternalJsons
 
         public override void Release()
         {
-            if (mObject != null)
+            if (_object != null)
             {
-                mObject.Free();
-                mObject = null;
+                _object.Free();
+                _object = null;
             }
         }
 
         public override void WriteTo(TextWriter output)
         {
-            mObject.Serialize(output);
+            _object.Serialize(output);
         }
     }
 }

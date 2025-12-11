@@ -11,7 +11,7 @@ namespace Scriba.JsonFactory.ExternalJsons
 
         public void WriteToAsText(TextWriter output)
         {
-            var writer = Pool<TextFilter>.New();
+            var writer = Pool<EscapeCharTextFilter>.New();
             writer.Init(output);
             try
             {
@@ -20,7 +20,7 @@ namespace Scriba.JsonFactory.ExternalJsons
             finally
             {
                 writer.Init(null);
-                Pool<TextFilter>.Free(writer);
+                Pool<EscapeCharTextFilter>.Free(writer);
             }
         }
     }

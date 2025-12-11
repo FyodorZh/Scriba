@@ -2,7 +2,6 @@
 
 namespace Scriba.JsonFactory
 {
-
     [StructLayout(LayoutKind.Explicit)]
     public struct Union
     {
@@ -21,53 +20,53 @@ namespace Scriba.JsonFactory
     /// </summary>
     public struct JsonElement
     {
-        private Union mValues;
-        public object mObjectValue;
+        private Union _valuesUnion;
+        private object _objectValue;
+        private object[] _substrings;
 
         public ElementType Type { get; private set; }
 
-        private object[] Substrings { get; set; }
 
         private bool BoolValue
         {
-            get { return mValues.BoolValue; }
-            set { mValues.BoolValue = value; }
+            get => _valuesUnion.BoolValue;
+            set => _valuesUnion.BoolValue = value;
         }
 
         private long LongValue
         {
-            get { return mValues.LongValue; }
-            set { mValues.LongValue = value; }
+            get => _valuesUnion.LongValue;
+            set => _valuesUnion.LongValue = value;
         }
 
         private double DoubleValue
         {
-            get { return mValues.DoubleValue; }
-            set { mValues.DoubleValue = value; }
+            get => _valuesUnion.DoubleValue;
+            set => _valuesUnion.DoubleValue = value;
         }
 
         private string StringValue
         {
-            get { return mObjectValue as string; }
-            set { mObjectValue = value; }
+            get => _objectValue as string;
+            set => _objectValue = value;
         }
 
         private IExternalJson SubJson
         {
-            get { return mObjectValue as IExternalJson; }
-            set { mObjectValue = value; }
+            get => _objectValue as IExternalJson;
+            set => _objectValue = value;
         }
 
         private JsonObject ObjectValue
         {
-            get { return mObjectValue as JsonObject; }
-            set { mObjectValue = value; }
+            get => _objectValue as JsonObject;
+            set => _objectValue = value;
         }
 
         private JsonArray ArrayValue
         {
-            get { return mObjectValue as JsonArray; }
-            set { mObjectValue = value; }
+            get => _objectValue as JsonArray;
+            set => _objectValue = value;
         }
         
         public JsonElement(string value)
@@ -82,13 +81,13 @@ namespace Scriba.JsonFactory
         {
             Type = ElementType.StringFormat;
             StringValue = format;
-            Substrings = list;
+            _substrings = list;
         }
 
         public JsonElement(double value)
             : this()
         {
-            Type = ElementType.String;
+            Type = ElementType.Number;
             DoubleValue = value;
         }
 
@@ -143,9 +142,9 @@ namespace Scriba.JsonFactory
             }
 
             Type = ElementType.Unknown;
-            mValues = new Union();
-            mObjectValue = null;
-            Substrings = null;
+            _valuesUnion = new Union();
+            _objectValue = null;
+            _substrings = null;
         }
 
         public bool TryGet(out string value)
@@ -164,7 +163,7 @@ namespace Scriba.JsonFactory
             if (Type == ElementType.StringFormat)
             {
                 format = StringValue;
-                substrings = Substrings;
+                substrings = _substrings;
                 return true;
             }
             format = "";

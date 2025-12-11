@@ -35,7 +35,10 @@ namespace Scriba.JsonFactory
                 mList = list;
             }
 
-            list.Add(obj);
+            if (list.Count < 1000)
+            {
+                list.Add(obj);
+            }
         }
     }
 }

@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Scriba.JsonFactory
 {
-    public interface IJsonArray
+    public interface IJsonArray : IDisposable
     {
         void AddElement(string value);
         void AddElement(double value);
@@ -11,73 +12,71 @@ namespace Scriba.JsonFactory
         IJsonObject AddObject();
         IJsonArray AddArray();
 
-        void Free();
-
         int Count { get; }
         JsonElement this[int id] { get; }
     }
 
     public sealed class JsonArray : IJsonArray
     {
-        private readonly List<JsonElement> mElements = new List<JsonElement>();
+        private readonly List<JsonElement> _elements = new List<JsonElement>();
 
         public void Free()
         {
-            for (int i = 0; i < mElements.Count; ++i)
+            for (int i = 0; i < _elements.Count; ++i)
             {
-                mElements[i].Free();
+                _elements[i].Free();
             }
-            mElements.Clear();
+            _elements.Clear();
             Pool<JsonArray>.Free(this);
         }
 
         IJsonArray IJsonArray.AddArray()
         {
             JsonArray array = Pool<JsonArray>.New();
-            mElements.Add(new JsonElement(array));
+            _elements.Add(new JsonElement(array));
             return array;
         }
 
         void IJsonArray.AddElement(string value)
         {
-            mElements.Add(new JsonElement(value));
+            _elements.Add(new JsonElement(value));
         }
 
         void IJsonArray.AddElement(double value)
         {
-            mElements.Add(new JsonElement(value));
+            _elements.Add(new JsonElement(value));
         }
 
         void IJsonArray.AddElement(bool value)
         {
-            mElements.Add(new JsonElement(value));
+            _elements.Add(new JsonElement(value));
         }
 
         void IJsonArray.AddElement(long value)
         {
-            mElements.Add(new JsonElement(value));
+            _elements.Add(new JsonElement(value));
         }
 
         IJsonObject IJsonArray.AddObject()
         {
             JsonObject obj = Pool<JsonObject>.New();
-            mElements.Add(new JsonElement(obj));
+            _elements.Add(new JsonElement(obj));
             return obj;
         }
 
-        void IJsonArray.Free()
+        void IDisposable.Dispose()
         {
             Free();
         }
 
         int IJsonArray.Count
         {
-            get { return mElements.Count; }
+            get { return _elements.Count; }
         }
 
         JsonElement IJsonArray.this[int id]
         {
-            get { return mElements[id]; }
+            get { return _elements[id]; }
         }
     }
 }

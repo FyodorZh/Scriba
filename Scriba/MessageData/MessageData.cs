@@ -4,12 +4,12 @@ namespace Scriba
 {
     public struct MessageData
     {
+        public IJsonObject Data { get; }
+        
         internal MessageData(IJsonObject data)
         {
             Data = data;
         }
-
-        public IJsonObject Data { get; }
 
         public string Severity
         {
@@ -27,8 +27,7 @@ namespace Scriba
         {
             get
             {
-                string time;
-                if (!Data.Get(MessageAttributes.Time).TryGet(out time))
+                if (!Data.Get(MessageAttributes.Time).TryGet(out string time))
                 {
                     time = "UNKNOWN";
                 }
@@ -43,25 +42,22 @@ namespace Scriba
 
         public bool WriteMessageTo(System.IO.TextWriter output)
         {
-            IJsonArray tags;
-            if (Data.Get(MessageAttributes.Tags).TryGet(out tags))
+            if (Data.Get(MessageAttributes.Tags).TryGet(out IJsonArray tags))
             {
                 int count = tags.Count;
                 for (int i = count - 1; i >= 0; --i)
                 {
                     var element = tags[i];
 
-                    IJsonObject tagPair;
-                    if (element.TryGet(out tagPair))
+                    if (element.TryGet(out IJsonObject tagPair))
                     {
                         int pairs = tagPair.Count;
                         for (int j = 0; j < pairs; ++j)
                         {
-                            var kv = tagPair[j];
-                            string value;
-                            if (kv.Value.TryGet(out value))
+                            (string Name, JsonElement Field) kv = tagPair[j];
+                            if (kv.Field.TryGet(out string value))
                             {
-                                output.Write(kv.Key);
+                                output.Write(kv.Name);
                                 output.Write("=");
                                 output.Write(value);
                                 output.Write("; ");
@@ -69,8 +65,7 @@ namespace Scriba
                         }
                     }
 
-                    string tag;
-                    if (element.TryGet(out tag))
+                    if (element.TryGet(out string tag))
                     {
                         output.Write(tag);
                         output.Write("; ");
@@ -84,8 +79,7 @@ namespace Scriba
         {
             get
             {
-                IJsonArray stack;
-                if (Data.Get(MessageAttributes.Stack).TryGet(out stack))
+                if (Data.Get(MessageAttributes.Stack).TryGet(out IJsonArray stack))
                 {
                     return stack.Count;
                 }
@@ -95,14 +89,12 @@ namespace Scriba
 
         public bool WriteStackTrace(string prefix, System.IO.TextWriter output)
         {
-            IJsonArray stack;
-            if (Data.Get(MessageAttributes.Stack).TryGet(out stack))
+            if (Data.Get(MessageAttributes.Stack).TryGet(out IJsonArray stack))
             {
                 int cnt = stack.Count;
                 for (int i = 0; i < cnt; ++i)
                 {
-                    IJsonObject frame;
-                    if (!stack[i].TryGet(out frame) || !WriteStackFrame(frame, prefix, output))
+                    if (!stack[i].TryGet(out IJsonObject frame) || !WriteStackFrame(frame, prefix, output))
                     {
                         return false;
                     }
@@ -114,11 +106,9 @@ namespace Scriba
 
         public bool WriteStackFrame(int frameId, string prefix, System.IO.TextWriter output)
         {
-            IJsonArray stack;
-            if (Data.Get(MessageAttributes.Stack).TryGet(out stack))
+            if (Data.Get(MessageAttributes.Stack).TryGet(out IJsonArray stack))
             {
-                IJsonObject frame;
-                if (stack[frameId].TryGet(out frame))
+                if (stack[frameId].TryGet(out IJsonObject frame))
                 {
                     return WriteStackFrame(frame, prefix, output);
                 }

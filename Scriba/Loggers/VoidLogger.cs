@@ -49,7 +49,7 @@ namespace Scriba
 
         public void json(IJsonObject message)
         {
-            message.Free();
+            message.Dispose();
         }
     }
 }

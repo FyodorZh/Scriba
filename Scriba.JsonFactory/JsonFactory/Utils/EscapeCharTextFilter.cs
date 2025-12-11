@@ -3,7 +3,7 @@ using System.Text;
 
 namespace Scriba.JsonFactory.Utils
 {
-    internal sealed class TextFilter : TextWriter
+    internal sealed class EscapeCharTextFilter : TextWriter
     {
         private TextWriter mWriter;
 
@@ -12,13 +12,7 @@ namespace Scriba.JsonFactory.Utils
             mWriter = core;
         }
 
-        public override Encoding Encoding
-        {
-            get
-            {
-                return mWriter.Encoding;
-            }
-        }
+        public override Encoding Encoding => mWriter.Encoding;
 
         public override void Write(char value)
         {
@@ -47,9 +41,9 @@ namespace Scriba.JsonFactory.Utils
 
         public override void Write(string value)
         {
-            for (int charIndex = 0; charIndex < value.Length; charIndex++)
+            foreach (var ch in value)
             {
-                Write(value[charIndex]);
+                Write(ch);
             }
         }
 
