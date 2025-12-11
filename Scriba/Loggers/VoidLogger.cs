@@ -12,8 +12,8 @@ namespace Scriba
         public Severity LogFor { get; set; }
 
         public Severity IgnoreStackFor { get; set; }
-        public string AppId { get; set; }
-        public string MachineName { get; set; }
+        public string AppId { get; set; } = "VOID";
+        public string MachineName { get; set; } = "VOID";
 
         public ITagList Tags => VoidTagList.Instance;
 

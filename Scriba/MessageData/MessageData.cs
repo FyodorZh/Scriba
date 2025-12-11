@@ -2,7 +2,7 @@ using Scriba.JsonFactory;
 
 namespace Scriba
 {
-    public struct MessageData
+    public readonly struct MessageData
     {
         public IJsonObject Data { get; }
         
@@ -15,7 +15,7 @@ namespace Scriba
         {
             get
             {
-                if (!Data.Get(MessageAttributes.Severity).TryGet(out string severity))
+                if (!Data.TryGet(MessageAttributes.Severity, out var severityField) || !severityField.TryGet(out string severity))
                 {
                     severity = "UNKNOWN";
                 }
@@ -27,7 +27,7 @@ namespace Scriba
         {
             get
             {
-                if (!Data.Get(MessageAttributes.Time).TryGet(out string time))
+                if (!Data.TryGet(MessageAttributes.Time, out var field) || !field.TryGet(out string time))
                 {
                     time = "UNKNOWN";
                 }
@@ -37,19 +37,19 @@ namespace Scriba
 
         public bool WriteTimeTo(System.IO.TextWriter output)
         {
-            return Data.Get(MessageAttributes.Time).WriteTo(output);
+            return Data.TryGet(MessageAttributes.Time, out var time) && time.WriteTo(output);
         }
 
         public bool WriteMessageTo(System.IO.TextWriter output)
         {
-            if (Data.Get(MessageAttributes.Tags).TryGet(out IJsonArray tags))
+            if (Data.TryGet(MessageAttributes.Tags, out var tagsField) && tagsField.TryGet(out IJsonArray? tags))
             {
                 int count = tags.Count;
                 for (int i = count - 1; i >= 0; --i)
                 {
                     var element = tags[i];
 
-                    if (element.TryGet(out IJsonObject tagPair))
+                    if (element.TryGet(out IJsonObject? tagPair))
                     {
                         int pairs = tagPair.Count;
                         for (int j = 0; j < pairs; ++j)
@@ -72,14 +72,14 @@ namespace Scriba
                     }
                 }
             }
-            return Data.Get(MessageAttributes.Message).WriteTo(output, false);
+            return Data.TryGet(MessageAttributes.Message, out var messageField) && messageField.WriteTo(output, false);
         }
 
         public int StackTraceDepth
         {
             get
             {
-                if (Data.Get(MessageAttributes.Stack).TryGet(out IJsonArray stack))
+                if (Data.TryGet(MessageAttributes.Stack, out var stackField) && stackField.TryGet(out IJsonArray? stack))
                 {
                     return stack.Count;
                 }
@@ -89,12 +89,12 @@ namespace Scriba
 
         public bool WriteStackTrace(string prefix, System.IO.TextWriter output)
         {
-            if (Data.Get(MessageAttributes.Stack).TryGet(out IJsonArray stack))
+            if (Data.TryGet(MessageAttributes.Stack, out var stackField) && stackField.TryGet(out IJsonArray? stack))
             {
                 int cnt = stack.Count;
                 for (int i = 0; i < cnt; ++i)
                 {
-                    if (!stack[i].TryGet(out IJsonObject frame) || !WriteStackFrame(frame, prefix, output))
+                    if (!stack[i].TryGet(out IJsonObject? frame) || !WriteStackFrame(frame, prefix, output))
                     {
                         return false;
                     }
@@ -106,9 +106,9 @@ namespace Scriba
 
         public bool WriteStackFrame(int frameId, string prefix, System.IO.TextWriter output)
         {
-            if (Data.Get(MessageAttributes.Stack).TryGet(out IJsonArray stack))
+            if (Data.TryGet(MessageAttributes.Stack, out var stackField) && stackField.TryGet(out IJsonArray? stack))
             {
-                if (stack[frameId].TryGet(out IJsonObject frame))
+                if (stack[frameId].TryGet(out IJsonObject? frame))
                 {
                     return WriteStackFrame(frame, prefix, output);
                 }
@@ -118,23 +118,18 @@ namespace Scriba
 
         private bool WriteStackFrame(IJsonObject frame, string prefix, System.IO.TextWriter output)
         {
-            string className;
-            string methodName;
-            string fileName;
-            long linePos;
-
-            if (!frame.Get(MessageAttributes.StackFrameClass).TryGet(out className) ||
-                !frame.Get(MessageAttributes.StackFrameMethod).TryGet(out methodName))
+            if (!frame.TryGet(MessageAttributes.StackFrameClass, out var stackFrameClassField) || !stackFrameClassField.TryGet(out string className) ||
+                !frame.TryGet(MessageAttributes.StackFrameMethod, out var stackFrameMethodField) || !stackFrameMethodField.TryGet(out string methodName))
             {
                 return false;
             }
 
-            if (!frame.Get(MessageAttributes.StackFrameFile).TryGet(out fileName))
+            if (!frame.TryGet(MessageAttributes.StackFrameFile, out var fileNameField) || !fileNameField.TryGet(out string fileName))
             {
                 fileName = "";
             }
 
-            if (!frame.Get(MessageAttributes.StackFrameLine).TryGet(out linePos))
+            if (!frame.TryGet(MessageAttributes.StackFrameLine, out var stackFrameLineField) || !stackFrameLineField.TryGet(out long linePos))
             {
                 linePos = 0;
             }

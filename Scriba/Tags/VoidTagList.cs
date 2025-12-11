@@ -4,7 +4,7 @@ namespace Scriba
     {
         public static readonly VoidTagList Instance = new VoidTagList();
         
-        public bool Add(string tag, string value = null)
+        public bool Add(string tag, string? value = null)
         {
             return false;
         }

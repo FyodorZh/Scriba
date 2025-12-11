@@ -9,29 +9,20 @@ namespace Scriba
         private static readonly Object mLocker = new Object();
         private static readonly Context mGlobalContext = new Context();
 
-        [ThreadStatic] private static List<Context> mContextStack;
+        [ThreadStatic] private static List<Context>? mContextStack;
 
         public static IContext PushContext(IContext context)
         {
-            Context ctx = context as Context;
-            if (ctx == null)
-            {
-                ctx = new Context();
-            }
-
-            if (mContextStack == null)
-            {
-                mContextStack = new List<Context>();
-            }
-
+            Context ctx = context as Context ?? new Context();
+            mContextStack ??= new List<Context>();
             mContextStack.Add(ctx);
 
             return ctx;
         }
 
-        public static IContext PopContext()
+        public static IContext? PopContext()
         {
-            List<Context> stack = mContextStack;
+            List<Context>? stack = mContextStack;
             if (stack != null && stack.Count > 0)
             {
                 Context ctx = stack[stack.Count - 1];
@@ -42,9 +33,9 @@ namespace Scriba
             return null;
         }
 
-        private static Context StackHead()
+        private static Context? StackHead()
         {
-            List<Context> stack = mContextStack;
+            List<Context>? stack = mContextStack;
             if (stack != null && stack.Count > 0)
             {
                 return stack[stack.Count - 1];
@@ -53,81 +44,60 @@ namespace Scriba
             return null;
         }
 
-        private static Context ActiveContext
-        {
-            get
-            {
-                Context context = StackHead();
-                if (context == null)
-                {
-                    context = mGlobalContext;
-                }
+        private static Context ActiveContext => StackHead() ?? mGlobalContext;
 
-                return context;
+        public static void AddConsumer(ILogConsumer logConsumer)
+        {
+            Context? context = StackHead();
+            if (context != null)
+            {
+                context.AddConsumer(logConsumer);
             }
-        }
-
-        public static void AddConsumer(ILogConsumer logConsumer, bool unique)
-        {
-            if (logConsumer != null)
+            else
             {
-                Context context = StackHead();
-                if (context != null)
+                lock (mLocker)
                 {
-                    context.AddConsumer(logConsumer, unique);
-                }
-                else
-                {
-                    lock (mLocker)
-                    {
-                        mGlobalContext.AddConsumer(logConsumer, unique);
-                    }
+                    mGlobalContext.AddConsumer(logConsumer);
                 }
             }
         }
 
         public static void RemoveConsumer(ILogConsumer logConsumer)
         {
-            if (logConsumer != null)
+            Context? context = StackHead();
+            if (context != null)
             {
-                Context context = StackHead();
-                if (context != null)
+                context.RemoveConsumer(logConsumer);
+            }
+            else
+            {
+                lock (mLocker)
                 {
-                    context.RemoveConsumer(logConsumer);
-                }
-                else
-                {
-                    lock (mLocker)
-                    {
-                        mGlobalContext.RemoveConsumer(logConsumer);
-                    }
+                    mGlobalContext.RemoveConsumer(logConsumer);
                 }
             }
         }
 
         public static void RemoveConsumerByType(Type type)
         {
-            if (type != null)
+            Context? context = StackHead();
+            if (context != null)
             {
-                Context context = StackHead();
-                if (context != null)
+                context.RemoveConsumerByType(type);
+            }
+            else
+            {
+                lock (mLocker)
                 {
-                    context.RemoveConsumerByType(type);
-                }
-                else
-                {
-                    lock (mLocker)
-                    {
-                        mGlobalContext.RemoveConsumerByType(type);
-                    }
+                    mGlobalContext.RemoveConsumerByType(type);
                 }
             }
         }
 
         public static Severity LogFor
         {
-            get { return ActiveContext.LogFor; }
-            set { ActiveContext.LogFor = value; }
+            get => ActiveContext.LogFor;
+            set => ActiveContext.LogFor = value;
         }
 
         /// <summary>
@@ -135,26 +105,23 @@ namespace Scriba
         /// </summary>
         public static Severity IgnoreStackFor
         {
-            get { return ActiveContext.IgnoreStackFor; }
-            set { ActiveContext.IgnoreStackFor = value; }
+            get => ActiveContext.IgnoreStackFor;
+            set => ActiveContext.IgnoreStackFor = value;
         }
 
         public static string AppId
         {
-            get { return ActiveContext.AppId; }
-            set { ActiveContext.AppId = value; }
+            get => ActiveContext.AppId;
+            set => ActiveContext.AppId = value;
         }
 
         public static string MachineName
         {
-            get { return ActiveContext.MachineName; }
-            set { ActiveContext.MachineName = value; }
+            get => ActiveContext.MachineName;
+            set => ActiveContext.MachineName = value;
         }
 
-        public static TagList Tags
-        {
-            get { return ActiveContext.Tags; }
-        }
+        public static TagList Tags => ActiveContext.Tags;
 
         public static void d(string format, params object[] args)
         {
@@ -179,18 +146,16 @@ namespace Scriba
         public static void wtf(string message, Exception exception)
         {
             Message(Severity.ERROR, "Exception ({text}): {exception}", message, exception.ToString());
-            OnExceptionInvoke(exception);
         }
 
         public static void wtf(Exception exception)
         {
             Message(Severity.ERROR, "Exception : {exception}", exception.ToString());
-            OnExceptionInvoke(exception);
         }
 
         public static void json(JsonFactory.IJsonObject message)
         {
-            Context context = StackHead();
+            Context? context = StackHead();
             if (context != null)
             {
                 context.Message(message);
@@ -206,7 +171,7 @@ namespace Scriba
 
         private static void Message(Severity severity, string format, params object[] args)
         {
-            Context context = StackHead();
+            Context? context = StackHead();
             if (context != null && severity <= context.LogFor)
             {
                 context.Message(LogMessageBuilder.Build(severity, context.IgnoreStackFor, format, args));
@@ -220,18 +185,6 @@ namespace Scriba
                     mGlobalContext.Message(message);
                 }
             }
-        }
-
-#if UNITY
-    public static event Action<Exception> OnException = delegate { };
-#endif
-
-        [Conditional("UNITY")]
-        private static void OnExceptionInvoke(Exception exception)
-        {
-#if UNITY
-        OnException.Invoke(exception);
-#endif
         }
     }
 }

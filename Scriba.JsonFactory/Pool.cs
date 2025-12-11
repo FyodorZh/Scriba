@@ -6,15 +6,15 @@ namespace Scriba.JsonFactory
         where TObject : class, new()
     {
         [System.ThreadStatic]
-        private static List<TObject> mList;
+        private static List<TObject>? _list;
 
         public static TObject New()
         {
-            var list = mList;
+            var list = _list;
             if (list == null)
             {
                 list = new List<TObject>();
-                mList = list;
+                _list = list;
             }
 
             if (list.Count > 0)
@@ -28,11 +28,11 @@ namespace Scriba.JsonFactory
 
         public static void Free(TObject obj)
         {
-            var list = mList;
+            var list = _list;
             if (list == null)
             {
                 list = new List<TObject>();
-                mList = list;
+                _list = list;
             }
 
             if (list.Count < 1000)

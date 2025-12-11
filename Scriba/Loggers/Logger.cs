@@ -9,10 +9,7 @@ namespace Scriba
 
         public Logger(ILogConsumer consumer)
         {
-            if (consumer != null)
-            {
-                _context.AddConsumer(consumer, false);
-            }
+            _context.AddConsumer(consumer);
         }
 
         public Logger(IEnumerable<ILogConsumer> consumers)
@@ -21,7 +18,7 @@ namespace Scriba
             {
                 if (consumer != null)
                 {
-                    _context.AddConsumer(consumer, false);
+                    _context.AddConsumer(consumer);
                 }
             }
         }

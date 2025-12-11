@@ -1,4 +1,6 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Runtime.InteropServices;
 
 namespace Scriba.JsonFactory
 {
@@ -21,8 +23,8 @@ namespace Scriba.JsonFactory
     public struct JsonElement
     {
         private Union _valuesUnion;
-        private object _objectValue;
-        private object[] _substrings;
+        private object? _objectValue;
+        private object[]? _substrings;
 
         public ElementType Type { get; private set; }
 
@@ -45,25 +47,25 @@ namespace Scriba.JsonFactory
             set => _valuesUnion.DoubleValue = value;
         }
 
-        private string StringValue
+        private string? StringValue
         {
             get => _objectValue as string;
             set => _objectValue = value;
         }
 
-        private IExternalJson SubJson
+        private IExternalJson? SubJson
         {
             get => _objectValue as IExternalJson;
             set => _objectValue = value;
         }
 
-        private JsonObject ObjectValue
+        private JsonObject? ObjectValue
         {
             get => _objectValue as JsonObject;
             set => _objectValue = value;
         }
 
-        private JsonArray ArrayValue
+        private JsonArray? ArrayValue
         {
             get => _objectValue as JsonArray;
             set => _objectValue = value;
@@ -128,18 +130,9 @@ namespace Scriba.JsonFactory
 
         public void Free()
         {
-            if (SubJson != null)
-            {
-                SubJson.Release();
-            }
-            if (ObjectValue != null)
-            {
-                ObjectValue.Free();
-            }
-            if (ArrayValue != null)
-            {
-                ArrayValue.Free();
-            }
+            SubJson?.Release();
+            ObjectValue?.Free();
+            ArrayValue?.Free();
 
             Type = ElementType.Unknown;
             _valuesUnion = new Union();
@@ -151,19 +144,19 @@ namespace Scriba.JsonFactory
         {
             if (Type == ElementType.String)
             {
-                value = StringValue;
+                value = StringValue ?? throw new Exception();
                 return true;
             }
             value = "";
             return false;
         }
 
-        public bool TryGet(out string format, out object[] substrings)
+        public bool TryGet([MaybeNullWhen(false)] out string format, [MaybeNullWhen(false)] out object[] substrings)
         {
             if (Type == ElementType.StringFormat)
             {
-                format = StringValue;
-                substrings = _substrings;
+                format = StringValue ?? throw new Exception();
+                substrings = _substrings ?? throw new Exception();
                 return true;
             }
             format = "";
@@ -204,33 +197,33 @@ namespace Scriba.JsonFactory
             return false;
         }
 
-        public bool TryGet(out IExternalJson value)
+        public bool TryGet([MaybeNullWhen(false)] out IExternalJson value)
         {
             if (Type == ElementType.Json)
             {
-                value = SubJson;
+                value = SubJson ?? throw new Exception();
                 return true;
             }
             value = null;
             return false;
         }
 
-        public bool TryGet(out IJsonObject value)
+        public bool TryGet([MaybeNullWhen(false)] out IJsonObject value)
         {
             if (Type == ElementType.Object)
             {
-                value = ObjectValue;
+                value = ObjectValue ?? throw new Exception();
                 return true;
             }
             value = null;
             return false;
         }
 
-        public bool TryGet(out IJsonArray value)
+        public bool TryGet([MaybeNullWhen(false)] out IJsonArray value)
         {
             if (Type == ElementType.Array)
             {
-                value = ArrayValue;
+                value = ArrayValue ?? throw new Exception();
                 return true;
             }
             value = null;

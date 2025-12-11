@@ -190,7 +190,7 @@ namespace Scriba.JsonFactory
                     return true;
                 case ElementType.Json:
                     {
-                        if (!element.TryGet(out IExternalJson value))
+                        if (!element.TryGet(out IExternalJson? value))
                         {
                             return false;
                         }
@@ -199,7 +199,7 @@ namespace Scriba.JsonFactory
                     return true;
                 case ElementType.Object:
                     {
-                        if (!element.TryGet(out IJsonObject value))
+                        if (!element.TryGet(out IJsonObject? value))
                         {
                             return false;
                         }
@@ -210,23 +210,28 @@ namespace Scriba.JsonFactory
                     }
                     return true;
                 case ElementType.Array:
+                {
+                    if (!element.TryGet(out IJsonArray? value))
                     {
-                        element.TryGet(out IJsonArray value);
-                        output.Write('[');
-                        for (int j = 0; j < value.Count; ++j)
-                        {
-                            if (j != 0)
-                            {
-                                output.Write(", ");
-                            }
-                            if (!WriteTo(value[j], output))
-                            {
-                                return false;
-                            }
-                        }
-                        output.Write(']');
+                        return false;
                     }
+
+                    output.Write('[');
+                    for (int j = 0; j < value.Count; ++j)
+                    {
+                        if (j != 0)
+                        {
+                            output.Write(", ");
+                        }
+
+                        if (!WriteTo(value[j], output))
+                        {
+                            return false;
+                        }
+                    }
+                    output.Write(']');
                     return true;
+                }
             }
             return false;
         }
@@ -271,7 +276,7 @@ namespace Scriba.JsonFactory
                     case '}':
                         if (state == InBracket || state == InBracketFormat)
                         {
-                            string elementFormat;
+                            string? elementFormat;
                             if (state == InBracket)
                             {
                                 idEndPos = i - 1;
@@ -318,8 +323,7 @@ namespace Scriba.JsonFactory
                                 return false;
                             }
 
-                            IExternalJson subJson = list[elementId] as IExternalJson;
-                            if (subJson != null)
+                            if (list[elementId] is IExternalJson subJson)
                             {
                                 if (escape)
                                 {
@@ -369,7 +373,7 @@ namespace Scriba.JsonFactory
             return true;
         }
 
-        private static string ToString(object obj, string format)
+        private static string ToString(object? obj, string? format)
         {
             if (obj == null)
             {
@@ -381,74 +385,74 @@ namespace Scriba.JsonFactory
                 return obj.ToString();
             }
 
-            if (obj is bool)
+            if (obj is bool boolValue)
             {
-                return ((bool)obj).ToString();
+                return boolValue.ToString();
             }
 
-            if (obj is char)
+            if (obj is char charValue)
             {
-                return ((char)obj).ToString();
+                return charValue.ToString();
             }
 
-            if (obj is sbyte)
+            if (obj is sbyte sByteValue)
             {
-                return ((sbyte)obj).ToString(format);
+                return sByteValue.ToString(format);
             }
 
-            if (obj is byte)
+            if (obj is byte byteValue)
             {
-                return ((byte)obj).ToString(format);
+                return byteValue.ToString(format);
             }
 
-            if (obj is Int16)
+            if (obj is Int16 shortValue)
             {
-                return ((Int16)obj).ToString(format);
+                return shortValue.ToString(format);
             }
 
-            if (obj is UInt16)
+            if (obj is UInt16 uShortValue)
             {
-                return ((UInt16)obj).ToString(format);
+                return uShortValue.ToString(format);
             }
 
-            if (obj is Int32)
+            if (obj is Int32 intValue)
             {
-                return ((Int32)obj).ToString(format);
+                return intValue.ToString(format);
             }
 
-            if (obj is UInt32)
+            if (obj is UInt32 uIntValue)
             {
-                return ((UInt32)obj).ToString(format);
+                return uIntValue.ToString(format);
             }
 
-            if (obj is Int64)
+            if (obj is Int64 longValue)
             {
-                return ((Int64)obj).ToString(format);
+                return longValue.ToString(format);
             }
 
-            if (obj is UInt64)
+            if (obj is UInt64 uLongValue)
             {
-                return ((UInt64)obj).ToString(format);
+                return uLongValue.ToString(format);
             }
 
-            if (obj is float)
+            if (obj is float floatValue)
             {
-                return ((float)obj).ToString(format);
+                return floatValue.ToString(format);
             }
 
-            if (obj is double)
+            if (obj is double doubleValue)
             {
-                return ((double)obj).ToString(format);
+                return doubleValue.ToString(format);
             }
 
-            if (obj is Decimal)
+            if (obj is Decimal decimalValue)
             {
-                return ((Decimal)obj).ToString(format);
+                return decimalValue.ToString(format);
             }
 
-            if (obj is DateTime)
+            if (obj is DateTime dateTime)
             {
-                return ((DateTime)obj).ToString(format);
+                return dateTime.ToString(format);
             }
 
             return obj.ToString();

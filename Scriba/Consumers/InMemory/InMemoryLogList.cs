@@ -1,3 +1,5 @@
+using System;
+
 namespace Scriba.Consumers
 {
     public class InMemoryLogList
@@ -17,6 +19,7 @@ namespace Scriba.Consumers
 
         public InMemoryLogList(int capacity)
         {
+            _queue = Array.Empty<LogEntity>(); // tmp
             Reinit(capacity);
         }
 
@@ -69,15 +72,15 @@ namespace Scriba.Consumers
             mCount -= 1;
         }
 
-        protected void Enqueue(LogEntity entity)
+        private void Enqueue(LogEntity entity)
         {
             _queue[(mPosition + mCount) % _capacity] = entity;
             mCount += 1;
         }
 
-        protected virtual System.DateTime Now()
+        protected virtual DateTime Now()
         {
-            return System.DateTime.UtcNow;
+            return DateTime.UtcNow;
         }
     }
 }

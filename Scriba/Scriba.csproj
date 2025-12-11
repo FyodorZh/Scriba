@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <LangVersion>9</LangVersion>
-    <Nullable>disable</Nullable>
-    <Version>0.2.0-dev.1</Version>
+    <Nullable>enable</Nullable>
+    <Version>0.2.0-dev.2</Version>
     <Title>Scriba</Title>
     <Authors>Fyodor Zhmaev</Authors>
     <Description>Logging library with zero allocations</Description>
@@ -13,8 +13,8 @@
     <RepositoryType>git</RepositoryType>
     <PackageReadmeFile>nuget.readme.md</PackageReadmeFile>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
-    <TargetFramework>netstandard2.0</TargetFramework>
     <PackageId>Scriba</PackageId>
+    <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
   <PropertyGroup>

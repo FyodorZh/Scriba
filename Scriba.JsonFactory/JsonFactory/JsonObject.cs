@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Scriba.JsonFactory
 {
@@ -16,7 +17,7 @@ namespace Scriba.JsonFactory
 
         int Count { get; }
         (string Name, JsonElement Filed) this[int id] { get; }
-        JsonElement Get(string name);
+        bool TryGet(string name, out JsonElement filed);
     }
 
     public sealed class JsonObject : IJsonObject
@@ -46,7 +47,7 @@ namespace Scriba.JsonFactory
                 _elements.Add((name, new JsonElement(array)));
                 return array;
             }
-            return null;
+            throw new InvalidOperationException(name);
         }
 
         bool IJsonObject.AddElement(string name, string value)
@@ -111,13 +112,13 @@ namespace Scriba.JsonFactory
 
         IJsonObject IJsonObject.AddObject(string name)
         {
-            if (TryFind(name) < 0)
+            if (CheckName(name) && TryFind(name) < 0)
             {
                 JsonObject obj = Pool<JsonObject>.New();
                 _elements.Add((name, new JsonElement(obj)));
                 return obj;
             }
-            return null;
+            throw new InvalidOperationException(name);
         }
 
         void IDisposable.Dispose()
@@ -129,14 +130,16 @@ namespace Scriba.JsonFactory
 
         (string Name, JsonElement Filed) IJsonObject.this[int id] => _elements[id];
 
-        JsonElement IJsonObject.Get(string name)
+        bool IJsonObject.TryGet(string name, out JsonElement field)
         {
             int id = TryFind(name);
             if (id < 0)
             {
-                return new JsonElement();
+                field = default;
+                return false;
             }
-            return _elements[id].Filed;
+            field = _elements[id].Filed;
+            return true;
         }
 
         private bool CheckName(string name)

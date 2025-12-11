@@ -4,9 +4,9 @@ namespace Scriba.JsonFactory.ExternalJsons
 {
     public class JsonObjectAsExternalJson : SimpleExternalJson
     {
-        private JsonObject _object;
+        private JsonObject? _object;
 
-        public IJsonObject Root => _object;
+        public IJsonObject? Root => _object;
 
         public JsonObjectAsExternalJson()
         {
@@ -34,7 +34,7 @@ namespace Scriba.JsonFactory.ExternalJsons
 
         public override void WriteTo(TextWriter output)
         {
-            _object.Serialize(output);
+            _object?.Serialize(output);
         }
     }
 }

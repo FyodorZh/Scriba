@@ -4,11 +4,11 @@ namespace Scriba
 {
     internal abstract class LoggerWrapper : ILogger
     {
-        private readonly ILogger mLog;
+        private readonly ILogger _log;
 
         protected LoggerWrapper(ILogger log)
         {
-            mLog = log;
+            _log = log;
         }
 
         protected abstract void AppendTags(JsonFactory.IJsonArray tags);
@@ -17,29 +17,29 @@ namespace Scriba
 
         public Severity LogFor
         {
-            get => mLog.LogFor;
-            set => mLog.LogFor = value;
+            get => _log.LogFor;
+            set => _log.LogFor = value;
         }
 
         public Severity IgnoreStackFor
         {
-            get => mLog.IgnoreStackFor;
-            set => mLog.IgnoreStackFor = value;
+            get => _log.IgnoreStackFor;
+            set => _log.IgnoreStackFor = value;
         }
 
         public string AppId
         {
-            get => mLog.AppId;
-            set => mLog.AppId = value;
+            get => _log.AppId;
+            set => _log.AppId = value;
         }
 
         public string MachineName
         {
-            get => mLog.MachineName;
-            set => mLog.MachineName = value;
+            get => _log.MachineName;
+            set => _log.MachineName = value;
         }
 
-        public ITagList Tags => mLog.Tags;
+        public ITagList Tags => _log.Tags;
 
         public void d(string format, params object[] args)
         {
@@ -73,18 +73,14 @@ namespace Scriba
 
         public void json(JsonFactory.IJsonObject json)
         {
-            JsonFactory.IJsonArray tags;
-            if (!json.Get(MessageAttributes.Tags).TryGet(out tags))
+            if (!json.TryGet(MessageAttributes.Tags, out var tagsField) || !tagsField.TryGet(out JsonFactory.IJsonArray? tags))
             {
                 tags = json.AddArray(MessageAttributes.Tags);
             }
+            
+            AppendTags(tags);
 
-            if (tags != null)
-            {
-                AppendTags(tags);
-            }
-
-            mLog.json(json);
+            _log.json(json);
         }
 
         #endregion
@@ -94,7 +90,7 @@ namespace Scriba
             var json = LogMessageBuilder.Build(severity, IgnoreStackFor, format, args);
             var tags = json.AddArray(MessageAttributes.Tags);
             AppendTags(tags);
-            mLog.json(json);
+            _log.json(json);
         }
     }
 }

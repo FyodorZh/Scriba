@@ -6,7 +6,7 @@ namespace Scriba
     {
         private readonly List<TagElement> mList = new List<TagElement>();
 
-        public bool Add(string tag, string value = null)
+        public bool Add(string tag, string? value = null)
         {
             if (mList.FindIndex(el => el.Tag == tag) >= 0)
             {

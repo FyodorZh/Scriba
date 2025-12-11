@@ -5,14 +5,14 @@ namespace Scriba.JsonFactory.Utils
 {
     internal sealed class EscapeCharTextFilter : TextWriter
     {
-        private TextWriter mWriter;
+        private TextWriter? _coreWriter;
 
-        public void Init(TextWriter core)
+        public void Init(TextWriter? core)
         {
-            mWriter = core;
+            _coreWriter = core;
         }
 
-        public override Encoding Encoding => mWriter.Encoding;
+        public override Encoding Encoding => _coreWriter?.Encoding ?? Encoding.UTF8;
 
         public override void Write(char value)
         {
@@ -25,15 +25,15 @@ namespace Scriba.JsonFactory.Utils
                 switch (value)
                 {
                     case '"':
-                        mWriter.Write('\'');
+                        _coreWriter?.Write('\'');
                         break;
 
                     case '\\':
-                        mWriter.Write('/');
+                        _coreWriter?.Write('/');
                         break;
 
                     default:
-                        mWriter.Write(value);
+                        _coreWriter?.Write(value);
                         break;
                 }
             }
@@ -49,8 +49,8 @@ namespace Scriba.JsonFactory.Utils
 
         private void EscapeChar(char charToEscape)
         {
-            mWriter.Write('\\');
-            mWriter.Write(charToEscape);
+            _coreWriter?.Write('\\');
+            _coreWriter?.Write(charToEscape);
         }
     }
 }

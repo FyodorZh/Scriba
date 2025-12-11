@@ -103,7 +103,7 @@ namespace Scriba
                     var method = sf.GetMethod();
 
                     IJsonObject frame = jsonStack.AddObject();
-                    frame.AddElement(MessageAttributes.StackFrameClass, method.DeclaringType.Name);
+                    frame.AddElement(MessageAttributes.StackFrameClass, method.DeclaringType!.Name);
                     frame.AddElement(MessageAttributes.StackFrameMethod, method.ToString());
 
                     string fileName = sf.GetFileName();
@@ -121,7 +121,7 @@ namespace Scriba
 
     internal class Context : IContext
     {
-        private readonly List<ILogConsumer> mLogConsumers = new List<ILogConsumer>();
+        private readonly List<ILogConsumer> _logConsumers = new List<ILogConsumer>();
 
         public Severity LogFor { get; set; }
 
@@ -142,39 +142,33 @@ namespace Scriba
             Tags = new TagList();
         }
 
-        public void AddConsumer(ILogConsumer logConsumer, bool unique)
+        public void AddConsumer(ILogConsumer logConsumer)
         {
-            if (unique)
-            {
-                RemoveConsumerByType(logConsumer.GetType());
-            }
-
-            mLogConsumers.Add(logConsumer);
+            _logConsumers.Add(logConsumer);
         }
 
         public void RemoveConsumer(ILogConsumer logConsumer)
         {
             logConsumer.Release();
-            mLogConsumers.Remove(logConsumer);
+            _logConsumers.Remove(logConsumer);
         }
 
         public void RemoveConsumerByType(Type type)
         {
             int j = 0;
-            for (int i = 0; i < mLogConsumers.Count; ++i)
+            for (int i = 0; i < _logConsumers.Count; ++i)
             {
-                if (mLogConsumers[i].GetType() == type)
+                if (_logConsumers[i].GetType() == type)
                 {
-                    mLogConsumers[i].Release();
-                    mLogConsumers[i] = null;
+                    _logConsumers[i].Release();
                 }
                 else
                 {
-                    mLogConsumers[j++] = mLogConsumers[i];
+                    _logConsumers[j++] = _logConsumers[i];
                 }
             }
 
-            mLogConsumers.RemoveRange(j, mLogConsumers.Count - j);
+            _logConsumers.RemoveRange(j, _logConsumers.Count - j);
         }
 
         public void Message(IJsonObject message)
@@ -183,23 +177,18 @@ namespace Scriba
             message.AddElement(MessageAttributes.MachineName, MachineName);
 
             {
-                IJsonArray tags;
-                if (!message.Get(MessageAttributes.Tags).TryGet(out tags))
+                if (!message.TryGet(MessageAttributes.Tags, out JsonElement field) || !field.TryGet(out IJsonArray? tags))
                 {
                     tags = message.AddArray(MessageAttributes.Tags);
                 }
-
-                if (tags != null)
-                {
-                    Tags.WriteTo(tags);
-                }
+                Tags.WriteTo(tags);
             }
 
-            for (int i = mLogConsumers.Count - 1; i >= 0; --i)
+            for (int i = _logConsumers.Count - 1; i >= 0; --i)
             {
                 try
                 {
-                    mLogConsumers[i].Message(new MessageData(message));
+                    _logConsumers[i].Message(new MessageData(message));
                 }
                 catch
                 {
@@ -212,12 +201,12 @@ namespace Scriba
 
         public void Destroy()
         {
-            for (int i = 0; i < mLogConsumers.Count; ++i)
+            foreach (var consumer in _logConsumers)
             {
-                mLogConsumers[i].Release();
+                consumer.Release();
             }
 
-            mLogConsumers.Clear();
+            _logConsumers.Clear();
         }
     }
 }
