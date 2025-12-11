@@ -10,9 +10,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogStashConsumers", "LogSta
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Consumer.Syslog", "Consumer.Syslog\Consumer.Syslog.csproj", "{277FB7BD-0419-4BC6-84C8-383416D0F6D1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scriba.Test", "Scriba.Test\Scriba.Test.csproj", "{B91A95E4-3FCD-4A0D-B46F-415264390C56}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scriba.Test", "Tests\Scriba.Test\Scriba.Test.csproj", "{B91A95E4-3FCD-4A0D-B46F-415264390C56}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scriba.JsonFactory", "Scriba.JsonFactory\Scriba.JsonFactory.csproj", "{2E00EFDF-39C2-447A-9FE3-53FCFE34F32E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{F6F69D35-99E1-4577-81EE-03ABF7FC7AF3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scriba.JsonFactory.Test", "Tests\Scriba.JsonFactory.Test\Scriba.JsonFactory.Test.csproj", "{A2832F86-E42F-428B-9CBD-6A073A618539}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -48,5 +52,13 @@ Global
 		{2E00EFDF-39C2-447A-9FE3-53FCFE34F32E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2E00EFDF-39C2-447A-9FE3-53FCFE34F32E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2E00EFDF-39C2-447A-9FE3-53FCFE34F32E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A2832F86-E42F-428B-9CBD-6A073A618539}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2832F86-E42F-428B-9CBD-6A073A618539}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2832F86-E42F-428B-9CBD-6A073A618539}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2832F86-E42F-428B-9CBD-6A073A618539}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{B91A95E4-3FCD-4A0D-B46F-415264390C56} = {F6F69D35-99E1-4577-81EE-03ABF7FC7AF3}
+		{A2832F86-E42F-428B-9CBD-6A073A618539} = {F6F69D35-99E1-4577-81EE-03ABF7FC7AF3}
 	EndGlobalSection
 EndGlobal
