@@ -5,7 +5,7 @@ namespace Scriba
 {
     public class Logger : ILogger
     {
-        private readonly Context _context = new Context();
+        private readonly IContext _context = new Context();
 
         public Logger(ILogConsumer consumer)
         {

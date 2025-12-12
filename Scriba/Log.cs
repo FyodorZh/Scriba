@@ -1,31 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace Scriba
 {
     public static class Log
     {
-        private static readonly Object mLocker = new Object();
-        private static readonly Context mGlobalContext = new Context();
+        private static readonly IContext _globalContext = new Context();
 
-        [ThreadStatic] private static List<Context>? mContextStack;
+        [ThreadStatic] private static List<IContext>? _contextStack;
 
-        public static IContext PushContext(IContext context)
+        public static ILoggerContext PushContext(ILoggerContext context)
         {
-            Context ctx = context as Context ?? new Context();
-            mContextStack ??= new List<Context>();
-            mContextStack.Add(ctx);
+            IContext ctx = context as IContext ?? new Context();
+            _contextStack ??= new List<IContext>();
+            _contextStack.Add(ctx);
 
             return ctx;
         }
 
-        public static IContext? PopContext()
+        public static ILoggerContext? PopContext()
         {
-            List<Context>? stack = mContextStack;
+            List<IContext>? stack = _contextStack;
             if (stack != null && stack.Count > 0)
             {
-                Context ctx = stack[stack.Count - 1];
+                IContext ctx = stack[stack.Count - 1];
                 stack.RemoveAt(stack.Count - 1);
                 return ctx;
             }
@@ -33,9 +31,9 @@ namespace Scriba
             return null;
         }
 
-        private static Context? StackHead()
+        private static IContext? StackHead()
         {
-            List<Context>? stack = mContextStack;
+            List<IContext>? stack = _contextStack;
             if (stack != null && stack.Count > 0)
             {
                 return stack[stack.Count - 1];
@@ -44,54 +42,24 @@ namespace Scriba
             return null;
         }
 
-        private static Context ActiveContext => StackHead() ?? mGlobalContext;
+        private static IContext ActiveContext => StackHead() ?? _globalContext;
 
         public static void AddConsumer(ILogConsumer logConsumer)
         {
-            Context? context = StackHead();
-            if (context != null)
-            {
-                context.AddConsumer(logConsumer);
-            }
-            else
-            {
-                lock (mLocker)
-                {
-                    mGlobalContext.AddConsumer(logConsumer);
-                }
-            }
+            IContext context = ActiveContext;
+            context.AddConsumer(logConsumer);
         }
 
         public static void RemoveConsumer(ILogConsumer logConsumer)
         {
-            Context? context = StackHead();
-            if (context != null)
-            {
-                context.RemoveConsumer(logConsumer);
-            }
-            else
-            {
-                lock (mLocker)
-                {
-                    mGlobalContext.RemoveConsumer(logConsumer);
-                }
-            }
+            IContext context = ActiveContext;
+            context.RemoveConsumer(logConsumer);
         }
 
         public static void RemoveConsumerByType(Type type)
         {
-            Context? context = StackHead();
-            if (context != null)
-            {
-                context.RemoveConsumerByType(type);
-            }
-            else
-            {
-                lock (mLocker)
-                {
-                    mGlobalContext.RemoveConsumerByType(type);
-                }
-            }
+            IContext context = ActiveContext;
+            context.RemoveConsumerByType(type);
         }
 
         public static Severity LogFor
@@ -121,7 +89,7 @@ namespace Scriba
             set => ActiveContext.MachineName = value;
         }
 
-        public static TagList Tags => ActiveContext.Tags;
+        public static ITagList Tags => ActiveContext.Tags;
 
         public static void d(string format, params object[] args)
         {
@@ -155,36 +123,14 @@ namespace Scriba
 
         public static void json(JsonFactory.IJsonObject message)
         {
-            Context? context = StackHead();
-            if (context != null)
-            {
-                context.Message(message);
-            }
-            else
-            {
-                lock (mLocker)
-                {
-                    mGlobalContext.Message(message);
-                }
-            }
+            IContext context = ActiveContext;
+            context.Message(message);
         }
 
         private static void Message(Severity severity, string format, params object[] args)
         {
-            Context? context = StackHead();
-            if (context != null && severity <= context.LogFor)
-            {
-                context.Message(LogMessageBuilder.Build(severity, context.IgnoreStackFor, format, args));
-            }
-            else if (severity <= mGlobalContext.LogFor)
-            {
-                var message = LogMessageBuilder.Build(severity, mGlobalContext.IgnoreStackFor, format, args);
-
-                lock (mLocker)
-                {
-                    mGlobalContext.Message(message);
-                }
-            }
+            IContext context = ActiveContext;
+            context.Message(LogMessageBuilder.Build(severity, context.IgnoreStackFor, format, args));
         }
     }
 }

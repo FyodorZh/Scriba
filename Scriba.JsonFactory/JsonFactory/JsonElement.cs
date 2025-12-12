@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
 namespace Scriba.JsonFactory
@@ -151,7 +150,7 @@ namespace Scriba.JsonFactory
             return false;
         }
 
-        public bool TryGet([MaybeNullWhen(false)] out string format, [MaybeNullWhen(false)] out object[] substrings)
+        public bool TryGet(out string format, out object[] substrings)
         {
             if (Type == ElementType.StringFormat)
             {
@@ -160,7 +159,7 @@ namespace Scriba.JsonFactory
                 return true;
             }
             format = "";
-            substrings = null;
+            substrings = null!;
             return false;
         }
 
@@ -197,36 +196,36 @@ namespace Scriba.JsonFactory
             return false;
         }
 
-        public bool TryGet([MaybeNullWhen(false)] out IExternalJson value)
+        public bool TryGet(out IExternalJson value)
         {
             if (Type == ElementType.Json)
             {
                 value = SubJson ?? throw new Exception();
                 return true;
             }
-            value = null;
+            value = null!;
             return false;
         }
 
-        public bool TryGet([MaybeNullWhen(false)] out IJsonObject value)
+        public bool TryGet(out IJsonObject value)
         {
             if (Type == ElementType.Object)
             {
                 value = ObjectValue ?? throw new Exception();
                 return true;
             }
-            value = null;
+            value = null!;
             return false;
         }
 
-        public bool TryGet([MaybeNullWhen(false)] out IJsonArray value)
+        public bool TryGet(out IJsonArray value)
         {
             if (Type == ElementType.Array)
             {
                 value = ArrayValue ?? throw new Exception();
                 return true;
             }
-            value = null;
+            value = null!;
             return false;
         }
     }

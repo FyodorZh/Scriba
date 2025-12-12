@@ -1,8 +1,7 @@
-﻿using Scriba.JsonFactory;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using Scriba.JsonFactory;
 
 namespace Scriba
 {
@@ -10,7 +9,7 @@ namespace Scriba
     {
         class DateTimeFormatWrapper : IExternalJson
         {
-            private DateTime _value;
+            private readonly DateTime _value;
 
             public DateTimeFormatWrapper(DateTime value)
             {
@@ -116,97 +115,6 @@ namespace Scriba
             }
 
             return logMessage;
-        }
-    }
-
-    internal class Context : IContext
-    {
-        private readonly List<ILogConsumer> _logConsumers = new List<ILogConsumer>();
-
-        public Severity LogFor { get; set; }
-
-        public Severity IgnoreStackFor { get; set; }
-
-        public string AppId { get; set; }
-
-        public string MachineName { get; set; }
-
-        public TagList Tags { get; private set; }
-
-        public Context()
-        {
-            LogFor = Severity.DEBUG;
-            IgnoreStackFor = Severity.ERROR; // полное отключение логирования колстека
-            MachineName = Environment.MachineName;
-            AppId = "unknown";
-            Tags = new TagList();
-        }
-
-        public void AddConsumer(ILogConsumer logConsumer)
-        {
-            _logConsumers.Add(logConsumer);
-        }
-
-        public void RemoveConsumer(ILogConsumer logConsumer)
-        {
-            logConsumer.Release();
-            _logConsumers.Remove(logConsumer);
-        }
-
-        public void RemoveConsumerByType(Type type)
-        {
-            int j = 0;
-            for (int i = 0; i < _logConsumers.Count; ++i)
-            {
-                if (_logConsumers[i].GetType() == type)
-                {
-                    _logConsumers[i].Release();
-                }
-                else
-                {
-                    _logConsumers[j++] = _logConsumers[i];
-                }
-            }
-
-            _logConsumers.RemoveRange(j, _logConsumers.Count - j);
-        }
-
-        public void Message(IJsonObject message)
-        {
-            message.AddElement(MessageAttributes.AppId, AppId);
-            message.AddElement(MessageAttributes.MachineName, MachineName);
-
-            {
-                if (!message.TryGet(MessageAttributes.Tags, out JsonElement field) || !field.TryGet(out IJsonArray? tags))
-                {
-                    tags = message.AddArray(MessageAttributes.Tags);
-                }
-                Tags.WriteTo(tags);
-            }
-
-            for (int i = _logConsumers.Count - 1; i >= 0; --i)
-            {
-                try
-                {
-                    _logConsumers[i].Message(new MessageData(message));
-                }
-                catch
-                {
-                    // TODO
-                }
-            }
-
-            message.Dispose();
-        }
-
-        public void Destroy()
-        {
-            foreach (var consumer in _logConsumers)
-            {
-                consumer.Release();
-            }
-
-            _logConsumers.Clear();
         }
     }
 }

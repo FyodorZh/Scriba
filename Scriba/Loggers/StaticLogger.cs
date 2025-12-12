@@ -6,6 +6,7 @@ namespace Scriba
     public class StaticLogger : ILogger
     {
         public static readonly StaticLogger Instance = new StaticLogger();
+        
         public Severity LogFor
         {
             get => Log.LogFor;

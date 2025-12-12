@@ -1,6 +1,6 @@
 namespace Scriba
 {
-    public interface IContext
+    public interface ILoggerContext
     {
         void Destroy();
     }

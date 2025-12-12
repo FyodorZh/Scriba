@@ -53,7 +53,7 @@ public class Tests
                     Clone(el.Value, to.AddArray(el.Name));
                     break;
                 case JsonValueKind.String:
-                    to.AddElement(el.Name, el.Value.GetString());
+                    to.AddElement(el.Name, el.Value.GetString()!);
                     break;
                 case JsonValueKind.Number:
                     to.AddElement(el.Name, el.Value.GetDouble());
@@ -67,7 +67,6 @@ public class Tests
                 case JsonValueKind.Null:
                     //to.AddElement(el.Name, null);
                     throw new NotImplementedException();
-                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -89,7 +88,7 @@ public class Tests
                     Clone(el, to.AddArray());
                     break;
                 case JsonValueKind.String:
-                    to.AddElement(el.GetString());
+                    to.AddElement(el.GetString()!);
                     break;
                 case JsonValueKind.Number:
                     to.AddElement(el.GetDouble());
@@ -103,7 +102,6 @@ public class Tests
                 case JsonValueKind.Null:
                     //to.AddElement(el.Name, null);
                     throw new NotImplementedException();
-                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }

@@ -1,43 +1,70 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
 
 namespace Scriba
 {
     public class TagList : ITagList
     {
-        private readonly List<TagElement> mList = new List<TagElement>();
+        private readonly List<TagElement> _tags = new List<TagElement>();
+        private readonly ReaderWriterLockSlim _locker = new ();
 
         public bool Add(string tag, string? value = null)
         {
-            if (mList.FindIndex(el => el.Tag == tag) >= 0)
+            _locker.EnterWriteLock();
+            try
             {
-                return false;
+                if (_tags.FindIndex(el => el.Tag == tag) >= 0)
+                {
+                    return false;
+                }
+
+                _tags.Add(new TagElement(tag, value));
+                return true;
             }
-            mList.Add(new TagElement(tag, value));
-            return true;
+            finally
+            {
+                _locker.ExitWriteLock();
+            }
         }
 
         public bool Remove(string tag)
         {
-            return mList.RemoveAll(el => el.Tag == tag) > 0;
+            _locker.EnterWriteLock();
+            try
+            {
+                return _tags.RemoveAll(el => el.Tag == tag) > 0;
+            }
+            finally
+            {
+                _locker.ExitWriteLock();
+            }
         }
 
         internal void WriteTo(JsonFactory.IJsonArray tags)
         {
-            int count = mList.Count;
-            for (int i = 0; i < count; ++i)
+            _locker.EnterReadLock();
+            try
             {
-                var tag = mList[i].Tag;
-                var value = mList[i].Value;
+                int count = _tags.Count;
+                for (int i = 0; i < count; ++i)
+                {
+                    var tag = _tags[i].Tag;
+                    var value = _tags[i].Value;
 
-                if (value == null)
-                {
-                    tags.AddElement(tag);
+                    if (value == null)
+                    {
+                        tags.AddElement(tag);
+                    }
+                    else
+                    {
+                        var element = tags.AddObject();
+                        element.AddElement(tag, value);
+                    }
                 }
-                else
-                {
-                    var element = tags.AddObject();
-                    element.AddElement(tag, value);
-                }
+            }
+            finally
+            {
+                _locker.ExitReadLock();
             }
         }
     }
