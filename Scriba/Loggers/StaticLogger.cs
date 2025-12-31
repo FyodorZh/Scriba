@@ -3,7 +3,7 @@ using Scriba.JsonFactory;
 
 namespace Scriba
 {
-    public class StaticLogger : ILogger
+    public class StaticLogger : ILoggerExt
     {
         public static readonly StaticLogger Instance = new StaticLogger();
         
@@ -19,19 +19,40 @@ namespace Scriba
             set => Log.IgnoreStackFor = value;
         }
 
-        public string AppId
+        public string? AppId
         {
             get => Log.AppId;
             set => Log.AppId = value;
         }
 
-        public string MachineName
+        public string? MachineName
         {
             get => Log.MachineName;
             set => Log.MachineName = value;
         }
 
+        public bool LogTime
+        {
+            get => Log.LogTime;
+            set => Log.LogTime = value;
+        }
+
         public ITagList Tags => Log.Tags;
+        
+        public void AddConsumer(ILogConsumer logConsumer)
+        {
+            Log.AddConsumer(logConsumer);
+        }
+
+        public void RemoveConsumer(ILogConsumer logConsumer)
+        {
+            Log.RemoveConsumer(logConsumer);
+        }
+
+        public void RemoveConsumerByType(Type type)
+        {
+            Log.RemoveConsumerByType(type);
+        }
 
         public void d(string format, params object[] args)
         {
@@ -66,6 +87,16 @@ namespace Scriba
         public void json(IJsonObject message)
         {
             Log.json(message);
+        }
+
+        public void Publish(MessageData message)
+        {
+            Log.Publish(message);
+        }
+
+        public void Dispose()
+        {
+            // Nothing to dispose
         }
     }
 }

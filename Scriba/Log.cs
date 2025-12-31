@@ -5,35 +5,35 @@ namespace Scriba
 {
     public static class Log
     {
-        private static readonly IContext _globalContext = new Context();
+        private static readonly ILoggerExt _globalLogger = new Logger();
 
-        [ThreadStatic] private static List<IContext>? _contextStack;
+        [ThreadStatic] private static List<ILoggerExt>? _stack;
 
-        public static ILoggerContext PushContext(ILoggerContext context)
+        public static ILogger PushThreadContextLogger(ILogger logger)
         {
-            IContext ctx = context as IContext ?? new Context();
-            _contextStack ??= new List<IContext>();
-            _contextStack.Add(ctx);
+            ILoggerExt ctx = (logger as ILoggerExt) ?? new Logger();
+            _stack ??= new List<ILoggerExt>();
+            _stack.Add(ctx);
 
             return ctx;
         }
 
-        public static ILoggerContext? PopContext()
+        public static ILogger? PopThreadContextLogger()
         {
-            List<IContext>? stack = _contextStack;
+            List<ILoggerExt>? stack = _stack;
             if (stack != null && stack.Count > 0)
             {
-                IContext ctx = stack[stack.Count - 1];
+                ILogger logger = stack[stack.Count - 1];
                 stack.RemoveAt(stack.Count - 1);
-                return ctx;
+                return logger;
             }
 
             return null;
         }
 
-        private static IContext? StackHead()
+        private static ILoggerExt? StackHead()
         {
-            List<IContext>? stack = _contextStack;
+            List<ILoggerExt>? stack = _stack;
             if (stack != null && stack.Count > 0)
             {
                 return stack[stack.Count - 1];
@@ -42,30 +42,27 @@ namespace Scriba
             return null;
         }
 
-        private static IContext ActiveContext => StackHead() ?? _globalContext;
+        private static ILoggerExt ActiveLogger => StackHead() ?? _globalLogger;
 
         public static void AddConsumer(ILogConsumer logConsumer)
         {
-            IContext context = ActiveContext;
-            context.AddConsumer(logConsumer);
+            ActiveLogger.AddConsumer(logConsumer);
         }
 
         public static void RemoveConsumer(ILogConsumer logConsumer)
         {
-            IContext context = ActiveContext;
-            context.RemoveConsumer(logConsumer);
+            ActiveLogger.RemoveConsumer(logConsumer);
         }
 
         public static void RemoveConsumerByType(Type type)
         {
-            IContext context = ActiveContext;
-            context.RemoveConsumerByType(type);
+            ActiveLogger.RemoveConsumerByType(type);
         }
 
         public static Severity LogFor
         {
-            get => ActiveContext.LogFor;
-            set => ActiveContext.LogFor = value;
+            get => ActiveLogger.LogFor;
+            set => ActiveLogger.LogFor = value;
         }
 
         /// <summary>
@@ -73,64 +70,68 @@ namespace Scriba
         /// </summary>
         public static Severity IgnoreStackFor
         {
-            get => ActiveContext.IgnoreStackFor;
-            set => ActiveContext.IgnoreStackFor = value;
+            get => ActiveLogger.IgnoreStackFor;
+            set => ActiveLogger.IgnoreStackFor = value;
         }
 
-        public static string AppId
+        public static string? AppId
         {
-            get => ActiveContext.AppId;
-            set => ActiveContext.AppId = value;
+            get => ActiveLogger.AppId;
+            set => ActiveLogger.AppId = value;
         }
 
-        public static string MachineName
+        public static string? MachineName
         {
-            get => ActiveContext.MachineName;
-            set => ActiveContext.MachineName = value;
+            get => ActiveLogger.MachineName;
+            set => ActiveLogger.MachineName = value;
         }
 
-        public static ITagList Tags => ActiveContext.Tags;
+        public static bool LogTime
+        {
+            get => ActiveLogger.LogTime;
+            set => ActiveLogger.LogTime = value;
+        }
+
+        public static ITagList Tags => ActiveLogger.Tags;
 
         public static void d(string format, params object[] args)
         {
-            Message(Severity.DEBUG, format, args);
+            ActiveLogger.d(format, args);
         }
 
         public static void i(string format, params object[] args)
         {
-            Message(Severity.INFO, format, args);
+            ActiveLogger.i(format, args);
         }
 
         public static void w(string format, params object[] args)
         {
-            Message(Severity.WARN, format, args);
+            ActiveLogger.w(format, args);
         }
 
         public static void e(string format, params object[] args)
         {
-            Message(Severity.ERROR, format, args);
+            ActiveLogger.e(format, args);
         }
 
         public static void wtf(string message, Exception exception)
         {
-            Message(Severity.ERROR, "Exception ({text}): {exception}", message, exception.ToString());
+            ActiveLogger.wtf(message, exception);
         }
 
         public static void wtf(Exception exception)
         {
-            Message(Severity.ERROR, "Exception : {exception}", exception.ToString());
+            ActiveLogger.wtf(exception);
         }
 
         public static void json(JsonFactory.IJsonObject message)
         {
-            IContext context = ActiveContext;
-            context.Message(message);
+            ActiveLogger.json(message);
         }
 
-        private static void Message(Severity severity, string format, params object[] args)
+        internal static void Publish(MessageData message)
         {
-            IContext context = ActiveContext;
-            context.Message(LogMessageBuilder.Build(severity, context.IgnoreStackFor, format, args));
+            ActiveLogger.Publish(message);
         }
     }
 }

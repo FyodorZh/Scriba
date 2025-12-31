@@ -52,7 +52,7 @@ namespace Scriba
                 output.Write(':');
 
                 AppendDigits(output, value.Second, 2);
-                output.Write(',');
+                output.Write('.');
 
                 AppendDigits(output, value.Millisecond, 3);
             }
@@ -75,13 +75,16 @@ namespace Scriba
             }
         }
 
-        public static IJsonObject Build(Severity severity, Severity ignoreStackFor, string message, params object[] list)
+        public static IJsonObject Build(Severity severity, Severity ignoreStackFor, bool addTime, string message, params object[] list)
         {
             IJsonObject logMessage = JsonObject.Construct();
 
-            logMessage.AddElement(MessageAttributes.Time, new DateTimeFormatWrapper(DateTime.UtcNow));
+            if (addTime)
+            {
+                logMessage.AddElement(MessageAttributes.Time, new DateTimeFormatWrapper(DateTime.UtcNow));
+            }
             logMessage.AddElement(MessageAttributes.Severity, severity.Serialize());
-            if (list != null && list.Length > 0)
+            if (list.Length > 0)
             {
                 logMessage.AddMultiElement(MessageAttributes.Message, message, list);
             }

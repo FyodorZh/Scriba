@@ -12,10 +12,26 @@ namespace Scriba
         public Severity LogFor { get; set; }
 
         public Severity IgnoreStackFor { get; set; }
-        public string AppId { get; set; } = "VOID";
-        public string MachineName { get; set; } = "VOID";
+        public string? AppId { get; set; }
+        public string? MachineName { get; set; }
+        public bool LogTime { get; set; }
 
         public ITagList Tags => VoidTagList.Instance;
+        
+        public void AddConsumer(ILogConsumer logConsumer)
+        {
+            // DO NOTHING
+        }
+
+        public void RemoveConsumer(ILogConsumer logConsumer)
+        {
+            // DO NOTHING
+        }
+
+        public void RemoveConsumerByType(Type type)
+        {
+            // DO NOTHING
+        }
 
         public void d(string format, params object[] args)
         {
@@ -50,6 +66,11 @@ namespace Scriba
         public void json(IJsonObject message)
         {
             message.Dispose();
+        }
+
+        public void Dispose()
+        {
+            // DO NOTHING
         }
     }
 }

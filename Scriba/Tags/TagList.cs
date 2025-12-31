@@ -8,6 +8,8 @@ namespace Scriba
         private readonly List<TagElement> _tags = new List<TagElement>();
         private readonly ReaderWriterLockSlim _locker = new ();
 
+        public bool IsEmpty { get; private set; } = true;
+
         public bool Add(string tag, string? value = null)
         {
             _locker.EnterWriteLock();
@@ -19,6 +21,7 @@ namespace Scriba
                 }
 
                 _tags.Add(new TagElement(tag, value));
+                IsEmpty = false;
                 return true;
             }
             finally
@@ -32,7 +35,9 @@ namespace Scriba
             _locker.EnterWriteLock();
             try
             {
-                return _tags.RemoveAll(el => el.Tag == tag) > 0;
+                bool res = _tags.RemoveAll(el => el.Tag == tag) > 0;
+                IsEmpty = _tags.Count == 0;
+                return res;
             }
             finally
             {
@@ -40,7 +45,7 @@ namespace Scriba
             }
         }
 
-        internal void WriteTo(JsonFactory.IJsonArray tags)
+        public void WriteTo(JsonFactory.IJsonArray tags)
         {
             _locker.EnterReadLock();
             try
