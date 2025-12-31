@@ -27,9 +27,14 @@ namespace Scriba
 
         bool ITagList.IsEmpty => base.Tags.IsEmpty && _core.Tags.IsEmpty;
 
-        bool ITagList.Add(string tag, string? value)
+        void ITagList.Set(string tag, string? value)
         {
-            return base.Tags.Add(tag, value);
+            base.Tags.Set(tag, value);
+        }
+        
+        void ITagList.Set(string tag, Func<string> valueFactory)
+        {
+            base.Tags.Set(tag, valueFactory);
         }
 
         bool ITagList.Remove(string tag)

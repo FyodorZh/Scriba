@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 
 namespace Scriba
@@ -10,24 +11,36 @@ namespace Scriba
 
         public bool IsEmpty { get; private set; } = true;
 
-        public bool Add(string tag, string? value = null)
+        private void Set(TagElement tagElement)
         {
             _locker.EnterWriteLock();
             try
             {
-                if (_tags.FindIndex(el => el.Tag == tag) >= 0)
+                for (int i = 0; i < _tags.Count; ++i)
                 {
-                    return false;
+                    if (_tags[i].Tag == tagElement.Tag)
+                    {
+                        _tags[i] = tagElement;
+                        return;
+                    }
                 }
-
-                _tags.Add(new TagElement(tag, value));
+                _tags.Add(tagElement);
                 IsEmpty = false;
-                return true;
             }
             finally
             {
                 _locker.ExitWriteLock();
             }
+        }
+
+        public void Set(string tag, string? value)
+        {
+            Set(value != null ? new TagElement(tag, value) : new TagElement(tag));
+        }
+
+        public void Set(string tag, Func<string> valueFactory)
+        {
+            Set(new TagElement(tag, valueFactory));
         }
 
         public bool Remove(string tag)
@@ -53,8 +66,9 @@ namespace Scriba
                 int count = _tags.Count;
                 for (int i = 0; i < count; ++i)
                 {
-                    var tag = _tags[i].Tag;
-                    var value = _tags[i].Value;
+                    var tagElement = _tags[i];
+                    string tag = tagElement.Tag;
+                    string? value = tagElement.Value ?? tagElement.ValueFactory?.Invoke();
 
                     if (value == null)
                     {

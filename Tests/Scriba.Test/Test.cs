@@ -29,7 +29,7 @@ namespace Scriba.Test
             
             Check(wrapper, consumer, _commonTests);
             
-            logger.Tags.Add("core");
+            logger.Tags.Set("core");
             Check(wrapper, consumer, _wrapperOnlyTests);
         }
 
@@ -72,9 +72,9 @@ namespace Scriba.Test
             (l => l.e("Hello {param}", "world"), "{'severity': 'ERROR', 'msg': 'Hello world', 'param': 'world'}"),
             (l => l.e("Hello {param} {0}", "big", "world"), "{'severity': 'ERROR', 'msg': 'Hello big big', 'param': 'big', '0': 'big'}"),
             (l => l.e("Hello {param} {1}", "big", "world"), "{'severity': 'ERROR', 'msg': 'Hello big world', 'param': 'big', '1': 'world'}"),
-            (l => l.Tags.Add("tg"), null),
+            (l => l.Tags.Set("tg"), null),
             (l => l.i("Hello"), "{'severity': 'INFO', 'msg': 'Hello', 'tags_list': ['tg']}"),
-            (l => l.Tags.Add("tag", "value"), null),
+            (l => l.Tags.Set("tag", "value"), null),
             (l => l.i("Hello"), "{'severity': 'INFO', 'msg': 'Hello', 'tags_list': ['tg', {'tag': 'value'}]}"),
             (l => l.Tags.Remove("tag"), null),
             (l => l.Tags.Remove("tg"), null),
@@ -82,9 +82,9 @@ namespace Scriba.Test
         
         private readonly (Action<ILogger> cmd, string? expected)[] _loggerOnlyTests =
         {
-            (l => l.Tags.Add("tag", "value"), null),
-            (l => l.Tags.Add("tag", "value2"), null),
-            (l => l.i("Hello"), "{'severity': 'INFO', 'msg': 'Hello', 'tags_list': [{'tag': 'value'}]}"),
+            (l => l.Tags.Set("tag", "value"), null),
+            (l => l.Tags.Set("tag", "value2"), null),
+            (l => l.i("Hello"), "{'severity': 'INFO', 'msg': 'Hello', 'tags_list': [{'tag': 'value2'}]}"),
         };
         
         private readonly (Action<ILogger> cmd, string? expected)[] _wrapperOnlyTests =
@@ -92,9 +92,9 @@ namespace Scriba.Test
             (l => l.d("Hello"), "{'severity': 'DEBUG', 'msg': 'Hello', 'tags_list': ['core']}"),
             (l => l.i("Hello"), "{'severity': 'INFO', 'msg': 'Hello', 'tags_list': ['core']}"),
             (l => l.w("Hello"), "{'severity': 'WARN', 'msg': 'Hello', 'tags_list': ['core']}"),
-            (l => l.Tags.Add("tag", "value"), null),
+            (l => l.Tags.Set("tag", "value"), null),
             (l => l.w("Hello"), "{'severity': 'WARN', 'msg': 'Hello', 'tags_list': ['core', {'tag': 'value'}]}"),
-            (l => l.Tags.Add("core", "override"), null),
+            (l => l.Tags.Set("core", "override"), null),
             (l => l.w("Hello"), "{'severity': 'WARN', 'msg': 'Hello', 'tags_list': ['core', {'tag': 'value'}, {'core': 'override'}]}"),
             (l => l.Tags.Remove("core"), null),
             (l => l.w("Hello"), "{'severity': 'WARN', 'msg': 'Hello', 'tags_list': ['core', {'tag': 'value'}]}"),

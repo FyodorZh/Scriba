@@ -1,3 +1,4 @@
+using System;
 using Scriba.JsonFactory;
 
 namespace Scriba
@@ -8,9 +9,14 @@ namespace Scriba
 
         public bool IsEmpty => true;
 
-        public bool Add(string tag, string? value = null)
+        public void Set(string tag, string? value = null)
         {
-            return false;
+            // DO NOTHING
+        }
+
+        public void Set(string tag, Func<string> valueFactory)
+        {
+            // DO NOTHING
         }
 
         public bool Remove(string tag)

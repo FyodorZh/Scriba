@@ -44,7 +44,7 @@ namespace Scriba.Test
         private readonly string _tag;
         private readonly string? _value;
         public AddTag(string tag, string? value) => (_tag, _value) = (tag, value);
-        public void Execute(ILogger logger) => logger.Tags.Add(_tag, _value);
+        public void Execute(ILogger logger) => logger.Tags.Set(_tag, _value);
         public override string ToString() => $"AddTag({_tag}, {_value})";
     }
     
