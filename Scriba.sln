@@ -2,13 +2,13 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scriba", "Scriba\Scriba.csproj", "{F78A856B-CA97-4612-ABEF-162B9BA474A4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileLogConsumer", "FileLogConsumer\FileLogConsumer.csproj", "{D0C38C5F-AFA6-49CE-A5B5-0AFAC45F1C7B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Consumer.ToFile", "Consumer.ToFile\Consumer.ToFile.csproj", "{D0C38C5F-AFA6-49CE-A5B5-0AFAC45F1C7B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogConsumer.Shared", "LogConsumer.Shared\LogConsumer.Shared.csproj", "{2C434864-87DD-4A2C-9D60-D6CA7688C4C2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogStashConsumers", "LogStashConsumers\LogStashConsumers.csproj", "{218CFC28-B17E-4F4A-90F4-5734956C31D5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Consumer.Syslog", "Consumer.Syslog\Consumer.Syslog.csproj", "{277FB7BD-0419-4BC6-84C8-383416D0F6D1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Consumer.ToSyslog", "Consumer.ToSyslog\Consumer.ToSyslog.csproj", "{277FB7BD-0419-4BC6-84C8-383416D0F6D1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scriba.Test", "Tests\Scriba.Test\Scriba.Test.csproj", "{B91A95E4-3FCD-4A0D-B46F-415264390C56}"
 EndProject

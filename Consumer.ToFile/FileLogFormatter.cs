@@ -1,10 +1,10 @@
 ﻿using LogConsumers;
 
-namespace FileLogConsumer
+namespace Scriba.Consumers.ToFile
 {
     public class FileLogFormatter : ILogFormatter
     {
-        public void Format(Log.MessageData logMessage, CharBuffer buffer)
+        public void Format(MessageData logMessage, CharBuffer buffer)
         {
             logMessage.WriteTimeTo(buffer);
             buffer.Write(" ");

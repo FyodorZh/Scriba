@@ -1,6 +1,8 @@
-﻿using Shared;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Text;
+using Actuarius;
+using Actuarius.Collections;
+using Scriba;
 
 namespace LogConsumers
 {
@@ -49,16 +51,14 @@ namespace LogConsumers
             }
         }
 
-        public bool Write(Log.MessageData logMessage)
+        public bool Write(MessageData logMessage)
         {
-            CharBuffer buffer;
-            if (!mFreeBuffersToWrite.TryPop(out buffer))
+            if (!mFreeBuffersToWrite.TryPop(out var buffer))
             {
                 buffer = new CharBuffer(mCharFreeBuffers, mMaxMessageCharSize);
             }
 
-            UTF8Encoding encoder;
-            if (!mEncoders.TryPop(out encoder))
+            if (!mEncoders.TryPop(out var encoder))
             {
                 encoder = new UTF8Encoding();
             }
@@ -78,8 +78,7 @@ namespace LogConsumers
                         return false;
                     }
 
-                    byte[] bytesBuffer = null;
-                    if (!mFreeBuffers[pow].TryPop(out bytesBuffer))
+                    if (!mFreeBuffers[pow].TryPop(out var bytesBuffer))
                     {
                         bytesBuffer = new byte[1 << (pow + 8)];
                     }

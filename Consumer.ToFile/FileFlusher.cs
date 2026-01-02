@@ -1,10 +1,8 @@
 ﻿using System;
 using System.IO;
-using System.Text;
-using LogConsumers;
-using Shared.Utils;
+using Operarius;
 
-namespace FileLogConsumer
+namespace Scriba.Consumers.ToFile
 {
     public class FileFlusher : IPeriodicLogic
     {

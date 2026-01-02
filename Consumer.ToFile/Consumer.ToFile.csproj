@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>Scriba.Consumers.ToFile</RootNamespace>
+    <LangVersion>9</LangVersion>
+    <PackageId>Scriba.Consumers.ToFile</PackageId>
+    <AssemblyName>Scriba.Consumer.ToFile</AssemblyName>
+  </PropertyGroup>
+  
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\Scriba\Scriba.csproj" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Actuarius.Memory" Version="0.1.0-dev.1" />
+    <PackageReference Include="Operarius" Version="0.1.0-dev.1" />
+  </ItemGroup>
+</Project>

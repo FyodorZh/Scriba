@@ -2,14 +2,14 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <OutputPath>..\..\..\..\..\..\code\libs\Debug\</OutputPath>
   </PropertyGroup>
-  <PropertyGroup>
-    <DefaultItemExcludes>obj/**;**/*.meta;$(DefaultItemExcludes);</DefaultItemExcludes>
-  </PropertyGroup>
+
   <ItemGroup>
-    <ProjectReference Include="..\..\Utils\Utils.csproj" />
-    <ProjectReference Include="..\Log\Log.csproj" />
+    <PackageReference Include="Actuarius.Collections" Version="0.1.0-dev.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Scriba\Scriba.csproj" />
   </ItemGroup>
 
 </Project>

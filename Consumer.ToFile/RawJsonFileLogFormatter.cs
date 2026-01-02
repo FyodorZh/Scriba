@@ -1,10 +1,10 @@
-using JsonFactory;
+using Scriba;
 
 namespace LogConsumers
 {
     public class RawJsonFileLogFormatter : ILogFormatter
     {
-        public void Format(Log.MessageData logMessage, CharBuffer buffer)
+        public void Format(MessageData logMessage, CharBuffer buffer)
         {
             logMessage.Data.Serialize(buffer);
             buffer.WriteLine();

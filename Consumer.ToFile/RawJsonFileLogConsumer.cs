@@ -1,7 +1,4 @@
 using System;
-using System.IO;
-using Shared;
-using Shared.Utils;
 
 namespace LogConsumers
 {

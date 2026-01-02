@@ -1,8 +1,8 @@
 using System;
-using FileLogConsumer;
-using Shared;
-using Shared.Pooling;
-using Shared.Utils;
+using Actuarius.Collections;
+using Actuarius.Memory;
+using Operarius;
+using Scriba.Consumers.ToFile;
 
 namespace LogConsumers
 {

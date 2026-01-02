@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Threading;
-using FileLogConsumer;
-using Shared;
-using Shared.Utils;
+using Actuarius.Memory;
+using Operarius;
+using Scriba;
+using Scriba.Consumers.ToFile;
 
 namespace LogConsumers
 {
-    public abstract class BaseFileLogConsumer : Log.ILogConsumer
+    public abstract class BaseFileLogConsumer : ILogConsumer
     {
         private readonly IPool<BytesBuffer> _bytesBufferPool;
         private readonly IPeriodicLogicRunner _logicRunner;
@@ -43,7 +44,7 @@ namespace LogConsumers
             _logicRunner.Run(_fileFlusher, flushInterval);
         }
 
-        public void Message(Log.MessageData logMessage)
+        public void Message(MessageData logMessage)
         {
             _accumulator.Write(logMessage);
         }
