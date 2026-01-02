@@ -39,7 +39,7 @@ namespace Scriba.Test
             {
                 pair.cmd.Invoke(logger);
                 var list = consumer.TakeAll();
-                var expected = pair.expected?.Replace('\'', '"');
+                var expected = pair.expected;
                 if (expected == null)
                 {
                     Assert.That(list, Is.Empty);
@@ -63,43 +63,45 @@ namespace Scriba.Test
         
         private readonly (Action<ILogger> cmd, string? expected)[] _commonTests =
         {
-            (l => l.d("Hello"), "{'severity': 'DEBUG', 'msg': 'Hello'}"),
-            (l => l.i("Hello"), "{'severity': 'INFO', 'msg': 'Hello'}"),
-            (l => l.w("Hello"), "{'severity': 'WARN', 'msg': 'Hello'}"),
-            (l => l.e("Hello"), "{'severity': 'ERROR', 'msg': 'Hello'}"),
-            (l => l.e("Hello {0}", "world"), "{'severity': 'ERROR', 'msg': 'Hello world', '0': 'world'}"),
-            (l => l.e("Hello {1} {0}", "world", "big"), "{'severity': 'ERROR', 'msg': 'Hello big world', '1': 'big', '0': 'world'}"),
-            (l => l.e("Hello {param}", "world"), "{'severity': 'ERROR', 'msg': 'Hello world', 'param': 'world'}"),
-            (l => l.e("Hello {param} {0}", "big", "world"), "{'severity': 'ERROR', 'msg': 'Hello big big', 'param': 'big', '0': 'big'}"),
-            (l => l.e("Hello {param} {1}", "big", "world"), "{'severity': 'ERROR', 'msg': 'Hello big world', 'param': 'big', '1': 'world'}"),
+            (l => l.d("Hello"), """{"severity": "DEBUG", "msg": "Hello"}"""),
+            (l => l.i("Hello"), """{"severity": "INFO", "msg": "Hello"}"""),
+            (l => l.w("Hello"), """{"severity": "WARN", "msg": "Hello"}"""),
+            (l => l.e("Hello"), """{"severity": "ERROR", "msg": "Hello"}"""),
+            (l => l.e("Hello {0}", "world"), """{"severity": "ERROR", "msg": "Hello world", "0": "world"}"""),
+            (l => l.e("Hello {1} {0}", "world", "big"), """{"severity": "ERROR", "msg": "Hello big world", "1": "big", "0": "world"}"""),
+            (l => l.e("Hello {param}", "world"), """{"severity": "ERROR", "msg": "Hello world", "param": "world"}"""),
+            (l => l.e("Hello {param} {0}", "big", "world"), """{"severity": "ERROR", "msg": "Hello big big", "param": "big", "0": "big"}"""),
+            (l => l.e("Hello {param} {1}", "big", "world"), """{"severity": "ERROR", "msg": "Hello big world", "param": "big", "1": "world"}"""),
             (l => l.Tags.Set("tg"), null),
-            (l => l.i("Hello"), "{'severity': 'INFO', 'msg': 'Hello', 'tags_list': ['tg']}"),
+            (l => l.i("Hello"), """{"severity": "INFO", "msg": "Hello", "tags_list": ["tg"]}"""),
             (l => l.Tags.Set("tag", "value"), null),
-            (l => l.i("Hello"), "{'severity': 'INFO', 'msg': 'Hello', 'tags_list': ['tg', {'tag': 'value'}]}"),
+            (l => l.i("Hello"), """{"severity": "INFO", "msg": "Hello", "tags_list": ["tg", {"tag": "value"}]}"""),
             (l => l.Tags.Remove("tag"), null),
             (l => l.Tags.Remove("tg"), null),
+            (l => l.i("{\"JsonValue\": \"Value\"}"), """{"severity": "INFO", "msg": "{'JsonValue': 'Value'}"}"""),
+            //(l => l.i("{\"JsonValue\": \"Value\"}", "unused"), """{"severity": "INFO", "msg": "{'JsonValue': 'Value'}"}"""),
         };
         
         private readonly (Action<ILogger> cmd, string? expected)[] _loggerOnlyTests =
         {
             (l => l.Tags.Set("tag", "value"), null),
             (l => l.Tags.Set("tag", "value2"), null),
-            (l => l.i("Hello"), "{'severity': 'INFO', 'msg': 'Hello', 'tags_list': [{'tag': 'value2'}]}"),
+            (l => l.i("Hello"), """{"severity": "INFO", "msg": "Hello", "tags_list": [{"tag": "value2"}]}"""),
         };
         
         private readonly (Action<ILogger> cmd, string? expected)[] _wrapperOnlyTests =
         {
-            (l => l.d("Hello"), "{'severity': 'DEBUG', 'msg': 'Hello', 'tags_list': ['core']}"),
-            (l => l.i("Hello"), "{'severity': 'INFO', 'msg': 'Hello', 'tags_list': ['core']}"),
-            (l => l.w("Hello"), "{'severity': 'WARN', 'msg': 'Hello', 'tags_list': ['core']}"),
+            (l => l.d("Hello"), """{"severity": "DEBUG", "msg": "Hello", "tags_list": ["core"]}"""),
+            (l => l.i("Hello"), """{"severity": "INFO", "msg": "Hello", "tags_list": ["core"]}"""),
+            (l => l.w("Hello"), """{"severity": "WARN", "msg": "Hello", "tags_list": ["core"]}"""),
             (l => l.Tags.Set("tag", "value"), null),
-            (l => l.w("Hello"), "{'severity': 'WARN', 'msg': 'Hello', 'tags_list': ['core', {'tag': 'value'}]}"),
+            (l => l.w("Hello"), """{"severity": "WARN", "msg": "Hello", "tags_list": ["core", {"tag": "value"}]}"""),
             (l => l.Tags.Set("core", "override"), null),
-            (l => l.w("Hello"), "{'severity': 'WARN', 'msg': 'Hello', 'tags_list': ['core', {'tag': 'value'}, {'core': 'override'}]}"),
+            (l => l.w("Hello"), """{"severity": "WARN", "msg": "Hello", "tags_list": ["core", {"tag": "value"}, {"core": "override"}]}"""),
             (l => l.Tags.Remove("core"), null),
-            (l => l.w("Hello"), "{'severity': 'WARN', 'msg': 'Hello', 'tags_list': ['core', {'tag': 'value'}]}"),
+            (l => l.w("Hello"), """{"severity": "WARN", "msg": "Hello", "tags_list": ["core", {"tag": "value"}]}"""),
             (l => l.Tags.Remove("tag"), null),
-            (l => l.e("Hello"), "{'severity': 'ERROR', 'msg': 'Hello', 'tags_list': ['core']}"),
+            (l => l.e("Hello"), """{"severity": "ERROR", "msg": "Hello", "tags_list": ["core"]}"""),
         };
     }
 }

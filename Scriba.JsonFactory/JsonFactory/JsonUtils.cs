@@ -203,7 +203,7 @@ namespace Scriba.JsonFactory
                         {
                             return false;
                         }
-                        if (!Serialize(value, output))
+                        if (!value.Serialize(output))
                         {
                             return false;
                         }
@@ -224,7 +224,7 @@ namespace Scriba.JsonFactory
                             output.Write(", ");
                         }
 
-                        if (!WriteTo(value[j], output))
+                        if (!value[j].WriteTo(output))
                         {
                             return false;
                         }

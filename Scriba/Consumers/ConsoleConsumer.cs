@@ -18,6 +18,7 @@ namespace Scriba.Consumers
             dst.Write(": ");
             logMessage.WriteMessageTo(dst);
             logMessage.WriteStackTrace("\t", dst);
+            dst.WriteLine();
         }
     }
 }
