@@ -4,6 +4,7 @@
     <RootNamespace>Scriba.Consumers.ToSyslog</RootNamespace>
     <LangVersion>9</LangVersion>
     <AssemblyName>Scriba.Consumer.ToSyslog</AssemblyName>
+    <IsPackable>false</IsPackable>
   </PropertyGroup>
   
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
