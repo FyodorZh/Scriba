@@ -1,3 +1,4 @@
+using System;
 using Scriba.JsonFactory;
 
 namespace Scriba
@@ -40,7 +41,7 @@ namespace Scriba
             return Data.TryGet(MessageAttributes.Time, out var time) && time.WriteTo(output);
         }
 
-        public bool WriteMessageTo(System.IO.TextWriter output)
+        public bool WriteTagsTo(System.IO.TextWriter output, Predicate<string>? tagsSelector = null)
         {
             if (Data.TryGet(MessageAttributes.Tags, out var tagsField) && tagsField.TryGet(out IJsonArray? tags))
             {
@@ -51,11 +52,11 @@ namespace Scriba
 
                     if (element.TryGet(out IJsonObject? tagPair))
                     {
-                        int pairs = tagPair.Count;
+                        int pairs = tagPair.Count; // must be 1
                         for (int j = 0; j < pairs; ++j)
                         {
                             (string Name, JsonElement Field) kv = tagPair[j];
-                            if (kv.Field.TryGet(out string value))
+                            if ((tagsSelector?.Invoke(kv.Name) ?? true) && kv.Field.TryGet(out string value))
                             {
                                 output.Write(kv.Name);
                                 output.Write("=");
@@ -67,11 +68,20 @@ namespace Scriba
 
                     if (element.TryGet(out string tag))
                     {
-                        output.Write(tag);
-                        output.Write("; ");
+                        if (tagsSelector?.Invoke(tag) ?? true)
+                        {
+                            output.Write(tag);
+                            output.Write("; ");
+                        }
                     }
                 }
             }
+
+            return true;
+        }
+
+        public bool WriteMessageTo(System.IO.TextWriter output)
+        {
             return Data.TryGet(MessageAttributes.Message, out var messageField) && messageField.WriteTo(output, false);
         }
 
