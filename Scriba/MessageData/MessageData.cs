@@ -1,4 +1,6 @@
 using System;
+using System.IO;
+using System.Text;
 using Scriba.JsonFactory;
 
 namespace Scriba
@@ -28,17 +30,25 @@ namespace Scriba
         {
             get
             {
-                if (!Data.TryGet(MessageAttributes.Time, out var field) || !field.TryGet(out string time))
+                if (!Data.TryGet(MessageAttributes.Time, out var field) || !field.TryGet(out IExternalJson externalJson))
                 {
-                    time = "UNKNOWN";
+                    return "UNKNOWN";
                 }
-                return time;
+
+                StringWriter sw = new();
+                externalJson.WriteToAsText(sw);
+                return sw.ToString();
             }
         }
 
         public bool WriteTimeTo(System.IO.TextWriter output)
         {
-            return Data.TryGet(MessageAttributes.Time, out var time) && time.WriteTo(output);
+            if (Data.TryGet(MessageAttributes.Time, out var field) && field.TryGet(out IExternalJson externalJson))
+            {
+                externalJson.WriteToAsText(output);
+                return true;
+            }
+            return false;
         }
 
         public bool WriteTagsTo(System.IO.TextWriter output, Predicate<string>? tagsSelector = null)
@@ -80,7 +90,7 @@ namespace Scriba
             return true;
         }
 
-        public bool WriteMessageTo(System.IO.TextWriter output)
+        public bool WriteMessageTo(TextWriter output)
         {
             return Data.TryGet(MessageAttributes.Message, out var messageField) && messageField.WriteTo(output, false);
         }
@@ -97,7 +107,7 @@ namespace Scriba
             }
         }
 
-        public bool WriteStackTrace(string prefix, System.IO.TextWriter output)
+        public bool WriteStackTrace(string prefix, TextWriter output)
         {
             if (Data.TryGet(MessageAttributes.Stack, out var stackField) && stackField.TryGet(out IJsonArray? stack))
             {
@@ -110,6 +120,8 @@ namespace Scriba
                     }
                     output.WriteLine();
                 }
+
+                return true;
             }
             return false;
         }

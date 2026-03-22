@@ -54,3 +54,4 @@ TestResult.xml
 nunit-*.xml
 copilot.data.migration.agent.xml
 Scriba.sln.DotSettings.user
+copilot.data.migration.ask2agent.xml
