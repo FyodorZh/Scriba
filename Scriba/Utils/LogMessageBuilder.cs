@@ -95,7 +95,7 @@ namespace Scriba
 
             if (severity < ignoreStackFor)
             {
-                IJsonArray jsonStack = logMessage.AddArray(MessageAttributes.Stack);
+                IJsonArray jsonStack = logMessage.AddArray(MessageAttributes.Stack) ?? throw new InvalidOperationException("Failed to create stack array in log message.");
 
                 var stack = new StackTrace(3, true);
 
@@ -108,7 +108,7 @@ namespace Scriba
                     frame.AddElement(MessageAttributes.StackFrameClass, method.DeclaringType!.Name);
                     frame.AddElement(MessageAttributes.StackFrameMethod, method.ToString());
 
-                    string fileName = sf.GetFileName();
+                    string? fileName = sf.GetFileName();
                     if (fileName != null)
                     {
                         frame.AddElement(MessageAttributes.StackFrameFile, fileName);

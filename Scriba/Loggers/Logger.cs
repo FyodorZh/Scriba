@@ -152,7 +152,7 @@ namespace Scriba
             {
                 if (!message.TryGet(MessageAttributes.Tags, out JsonElement field) || !field.TryGet(out IJsonArray tags))
                 {
-                    tags = message.AddArray(MessageAttributes.Tags);
+                    tags = message.AddArray(MessageAttributes.Tags) ?? throw new InvalidOperationException("Failed to add tags array to message");
                 }
                 tagList.WriteTo(tags);
             }

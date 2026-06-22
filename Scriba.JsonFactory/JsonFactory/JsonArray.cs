@@ -69,14 +69,8 @@ namespace Scriba.JsonFactory
             Free();
         }
 
-        int IJsonArray.Count
-        {
-            get { return _elements.Count; }
-        }
+        int IJsonArray.Count => _elements.Count;
 
-        JsonElement IJsonArray.this[int id]
-        {
-            get { return _elements[id]; }
-        }
+        JsonElement IJsonArray.this[int id] => _elements[id];
     }
 }

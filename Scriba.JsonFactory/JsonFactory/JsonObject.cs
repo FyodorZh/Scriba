@@ -11,8 +11,8 @@ namespace Scriba.JsonFactory
         bool AddElement(string name, bool value);
         bool AddElement(string name, long value);
         bool AddElement(string name, IExternalJson value);
-        IJsonObject AddObject(string name);
-        IJsonArray AddArray(string name);
+        IJsonObject? AddObject(string name);
+        IJsonArray? AddArray(string name);
 
         int Count { get; }
         (string Name, JsonElement Filed) this[int id] { get; }
@@ -21,12 +21,12 @@ namespace Scriba.JsonFactory
 
     public sealed class JsonObject : IJsonObject
     {
+        private readonly List<(string Name, JsonElement Filed)> _elements = new ();
+        
         public static IJsonObject Construct()
         {
             return Pool<JsonObject>.New();
         }
-
-        private readonly List<(string Name, JsonElement Filed)> _elements = new ();
 
         public void Free()
         {
@@ -38,7 +38,7 @@ namespace Scriba.JsonFactory
             Pool<JsonObject>.Free(this);
         }
 
-        IJsonArray IJsonObject.AddArray(string name)
+        IJsonArray? IJsonObject.AddArray(string name)
         {
             if (CheckName(name) && TryFind(name) < 0)
             {
@@ -46,7 +46,7 @@ namespace Scriba.JsonFactory
                 _elements.Add((name, new JsonElement(array)));
                 return array;
             }
-            throw new InvalidOperationException(name);
+            return null;
         }
 
         bool IJsonObject.AddElement(string name, string value)
@@ -109,7 +109,7 @@ namespace Scriba.JsonFactory
             return false;
         }
 
-        IJsonObject IJsonObject.AddObject(string name)
+        IJsonObject? IJsonObject.AddObject(string name)
         {
             if (CheckName(name) && TryFind(name) < 0)
             {
@@ -117,7 +117,8 @@ namespace Scriba.JsonFactory
                 _elements.Add((name, new JsonElement(obj)));
                 return obj;
             }
-            throw new InvalidOperationException(name);
+
+            return null;
         }
 
         void IDisposable.Dispose()
