@@ -72,7 +72,7 @@ namespace Scriba
             _locker.EnterWriteLock();
             try
             {
-                for (int i = 0; i < _logConsumers.Count; ++i)
+                for (int i = _logConsumers.Count - 1; i >= 0; --i)
                 {
                     if (_logConsumers[i].GetType() == type)
                     {
