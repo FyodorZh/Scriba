@@ -81,9 +81,9 @@ namespace Scriba
 
             if (addTime)
             {
-                logMessage.AddElement(MessageAttributes.Time, new DateTimeFormatWrapper(DateTime.UtcNow));
+                logMessage.AddElement(MessageAttributes.Time, DateTime.UtcNow.ToBinary());
             }
-            logMessage.AddElement(MessageAttributes.Severity, severity.Serialize());
+            logMessage.AddElement(MessageAttributes.Severity, (long)severity);
             if (list.Length > 0)
             {
                 logMessage.AddMultiElement(MessageAttributes.Message, message, list);

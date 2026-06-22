@@ -18,11 +18,6 @@
         StringFormat,
 
         /// <summary>
-        /// Дробное число (double)
-        /// </summary>
-        Number,
-
-        /// <summary>
         /// Булеан
         /// </summary>
         Bool,
@@ -31,6 +26,11 @@
         /// Целое число (64bit)
         /// </summary>
         Long,
+        
+        /// <summary>
+        /// Дробное число (double)
+        /// </summary>
+        Number,
 
         /// <summary>
         /// Внешний провайдер json объекта произвольной формы: {....}

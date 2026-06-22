@@ -2,9 +2,11 @@ namespace Scriba
 {
     public enum Severity : byte
     {
-        ERROR = 0,
-        WARN = 1,
-        INFO = 2,
-        DEBUG = 3
+        UNKNOWN = 0,
+        FATAL = 1,
+        ERROR = 2,
+        WARN = 3,
+        INFO = 4,
+        DEBUG = 5
     }
 }

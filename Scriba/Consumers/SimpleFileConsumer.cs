@@ -28,7 +28,10 @@ namespace Scriba
         
         private static void DefaultFormatter(MessageData logMessage, TextWriter dst)
         {
-            logMessage.Data.Serialize(dst);
+            dst.Write(logMessage.Severity);
+            dst.Write(": ");
+            logMessage.WriteMessageTo(dst);
+            logMessage.WriteStackTrace("\t", dst);
             dst.WriteLine();
         }
     }

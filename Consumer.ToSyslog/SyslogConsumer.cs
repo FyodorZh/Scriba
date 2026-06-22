@@ -69,20 +69,23 @@ namespace Scriba.Consumers.ToSyslog
             {
                 SyslogNet.Client.Severity severity;
                 
-                string severityStr = logMessage.Severity;
-                switch (severityStr)
+                var logSeverity = logMessage.Severity;
+                switch (logSeverity)
                 {
-                    case "DEBUG":
+                    case Severity.DEBUG:
+                        severity = SyslogNet.Client.Severity.Debug;
+                        break;
+                    case Severity.INFO:
                         severity = SyslogNet.Client.Severity.Informational;
                         break;
-                    case "INFO":
-                        severity = SyslogNet.Client.Severity.Informational;
+                    case Severity.WARN:
+                        severity = SyslogNet.Client.Severity.Warning;
                         break;
-                    case "ERROR":
+                    case Severity.ERROR:
                         severity = SyslogNet.Client.Severity.Error;
                         break;
-                    case "WARN":
-                        severity = SyslogNet.Client.Severity.Warning;
+                    case Severity.FATAL:
+                        severity = SyslogNet.Client.Severity.Critical;
                         break;
                     default:
                         severity = SyslogNet.Client.Severity.Error;
@@ -100,21 +103,19 @@ namespace Scriba.Consumers.ToSyslog
                 try
                 {
                     string[] lines = message.Split(separators);
-                    
-                    SyslogMessage msg;
 
                     int iLine = 0;
-                    for (int i = 0; i < lines.Length; i++)
+                    foreach (var t in lines)
                     {
-                        string str = lines[i].Trim();
+                        string str = t.Trim();
                         if (string.IsNullOrEmpty(str))
                             continue;
                         for (int pos = 0; pos < str.Length; pos += MAX_TEXT_LENGTH)
                         {
-                            string strP = (lines.Length > 1) ? string.Format("({0}{1}) ", severityStr[0].ToString(), iLine) : string.Empty;
-                            string strOut = string.Format("{0}{1}:{2}", strP, message, str.Substring(pos, Math.Min(MAX_TEXT_LENGTH, str.Length - pos)));
+                            string strP = (lines.Length > 1) ? $"({logSeverity.ToString()}{iLine}) " : string.Empty;
+                            string strOut = $"{strP}{message}:{str.Substring(pos, Math.Min(MAX_TEXT_LENGTH, str.Length - pos))}";
 
-                            msg = new SyslogMessage(DateTimeOffset.Now, Facility.LocalUse0, severity, machineName, appName, strOut);
+                            var msg = new SyslogMessage(DateTimeOffset.Now, Facility.LocalUse0, severity, machineName, appName, strOut);
                             sender.Send(msg, serializer);
                             iLine++;
                         }

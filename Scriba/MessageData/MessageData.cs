@@ -14,41 +14,29 @@ namespace Scriba
             Data = data;
         }
 
-        public string Severity
+        public Severity Severity
         {
             get
             {
-                if (!Data.TryGet(MessageAttributes.Severity, out var severityField) || !severityField.TryGet(out string severity))
+                if (!Data.TryGet(MessageAttributes.Severity, out var severityField) || !severityField.TryGet(out long severity))
                 {
-                    severity = "UNKNOWN";
+                    return Severity.UNKNOWN;
                 }
-                return severity;
+                return (Severity)severity;
             }
         }
 
-        public string Time
+        public DateTime? Time
         {
             get
             {
-                if (!Data.TryGet(MessageAttributes.Time, out var field) || !field.TryGet(out IExternalJson externalJson))
+                if (!Data.TryGet(MessageAttributes.Time, out var field) || !field.TryGet(out long binaryTime))
                 {
-                    return "UNKNOWN";
+                    return null;
                 }
 
-                StringWriter sw = new();
-                externalJson.WriteToAsText(sw);
-                return sw.ToString();
+                return DateTime.FromBinary(binaryTime);
             }
-        }
-
-        public bool WriteTimeTo(System.IO.TextWriter output)
-        {
-            if (Data.TryGet(MessageAttributes.Time, out var field) && field.TryGet(out IExternalJson externalJson))
-            {
-                externalJson.WriteToAsText(output);
-                return true;
-            }
-            return false;
         }
 
         public bool WriteTagsTo(System.IO.TextWriter output, Predicate<string>? tagsSelector = null)
