@@ -3,7 +3,7 @@
     <PropertyGroup>
         <LangVersion>9</LangVersion>
         <Nullable>enable</Nullable>
-        <Version>0.2.1-dev.0</Version>
+        <Version>0.2.2-dev.0</Version>
         <Title>Scriba.JsonFactory</Title>
         <Authors>Fyodor Zhmaev</Authors>
         <Description>Logging library with zero allocations</Description>

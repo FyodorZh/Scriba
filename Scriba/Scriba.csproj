@@ -3,7 +3,7 @@
   <PropertyGroup>
     <LangVersion>9</LangVersion>
     <Nullable>enable</Nullable>
-    <Version>0.2.3-dev.0</Version>
+    <Version>0.2.4-dev.0</Version>
     <Title>Scriba</Title>
     <Authors>Fyodor Zhmaev</Authors>
     <Description>Logging library with zero allocations</Description>

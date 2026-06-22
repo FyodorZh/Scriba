@@ -3,7 +3,7 @@ using SyslogNet.Client.Serialization;
 using SyslogNet.Client.Transport;
 using System;
 
-namespace Scriba.Consumers.ToSyslog
+namespace Scriba.Consumers.Syslog
 {
     public class SyslogConsumer : ILogConsumer
     {

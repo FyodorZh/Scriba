@@ -1,0 +1,41 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>Scriba.Consumers.Syslog</RootNamespace>
+    <LangVersion>14</LangVersion>
+    <AssemblyName>Scriba.Consumer.Syslog</AssemblyName>
+    <IsPackable>true</IsPackable>
+    <Version>0.1.0-dev.0</Version>
+    <Authors>Fyodor Zhmaev</Authors>
+    <Description>Scriba consumer for Android Logcat</Description>
+    <Copyright>Copyright (c) Fyodor Zhmaev 2026</Copyright>
+    <PackageProjectUrl>https://github.com/FyodorZh/Scriba</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/FyodorZh/Scriba.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageReadmeFile>nuget.readme.md</PackageReadmeFile>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageId>Scriba.Consumer.Syslog</PackageId>
+  </PropertyGroup>
+
+    <PropertyGroup>
+        <IncludeReferencedProjects>true</IncludeReferencedProjects>
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    </PropertyGroup>
+  
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\..\Scriba\Scriba.csproj" />
+  </ItemGroup>
+    <ItemGroup>
+        <None Include="nuget.readme.md" Pack="true" PackagePath="\" />
+        <None Include="..\..\LICENSE" Pack="true" PackagePath="\" />
+    </ItemGroup>
+</Project>
