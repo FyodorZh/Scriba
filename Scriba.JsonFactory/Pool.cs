@@ -3,14 +3,19 @@ using System.Collections.Generic;
 
 namespace Scriba.JsonFactory
 {
+    /// <summary>
+    /// Provides a two-tier object pool (thread-local + global) for reusable
+    /// <typeparamref name="TObject"/> instances, reducing allocation pressure.
+    /// </summary>
+    /// <typeparam name="TObject">The type of objects to pool. Must be a reference type with a parameterless constructor.</typeparam>
     internal static class Pool<TObject>
         where TObject : class, new()
     {
         private const int MaxGlobalPopulationSize = 1000;
         private const int HalfPopulationSize = 50;
-        
+
         private static readonly Stack<TObject> _globalStack = new ();
-        
+
         [ThreadStatic]
         private static Stack<TObject>? _stack;
 
@@ -71,7 +76,6 @@ namespace Scriba.JsonFactory
                     {
                         _globalStack.Push(src.Pop());
                     }
-                    //else do nothing, just let the GC collect the rest
                 }
             }
         }
