@@ -1,43 +1,78 @@
-﻿using System.Collections.Generic;
+using System;
+using System.Collections.Generic;
 
 namespace Scriba.JsonFactory
 {
     internal static class Pool<TObject>
         where TObject : class, new()
     {
-        [System.ThreadStatic]
-        private static List<TObject>? _list;
+        private const int MaxGlobalPopulationSize = 1000;
+        private const int HalfPopulationSize = 50;
+        
+        private static readonly Stack<TObject> _globalStack = new ();
+        
+        [ThreadStatic]
+        private static Stack<TObject>? _stack;
 
         public static TObject New()
         {
-            var list = _list;
-            if (list == null)
+            var stack = _stack;
+            if (stack == null)
             {
-                list = new List<TObject>();
-                _list = list;
+                stack = new Stack<TObject>();
+                _stack = stack;
             }
 
-            if (list.Count > 0)
+            if (stack.Count == 0)
             {
-                TObject res = list[list.Count - 1];
-                list.RemoveAt(list.Count - 1);
-                return res;
+                Populate(stack);
             }
-            return new TObject();
+
+            return stack.Pop();
         }
 
         public static void Free(TObject obj)
         {
-            var list = _list;
-            if (list == null)
+            var stack = _stack;
+            if (stack == null)
             {
-                list = new List<TObject>();
-                _list = list;
+                stack = new Stack<TObject>();
+                _stack = stack;
             }
 
-            if (list.Count < 1000)
+            stack.Push(obj);
+            if (stack.Count >= HalfPopulationSize * 2)
             {
-                list.Add(obj);
+                Depopulate(stack);
+            }
+        }
+
+        private static void Populate(Stack<TObject> dst)
+        {
+            int fromGlobal;
+            lock (_globalStack)
+            {
+                fromGlobal = Math.Min(HalfPopulationSize, _globalStack.Count);
+                for (int i = 0; i < fromGlobal; ++i)
+                    dst.Push(_globalStack.Pop());
+            }
+            for (int i = fromGlobal; i < HalfPopulationSize; ++i)
+                dst.Push(new TObject());
+        }
+
+        private static void Depopulate(Stack<TObject> src)
+        {
+            lock (_globalStack)
+            {
+                int count = Math.Min(HalfPopulationSize, src.Count);
+                for (int i = 0; i < count; ++i)
+                {
+                    if (_globalStack.Count < MaxGlobalPopulationSize)
+                    {
+                        _globalStack.Push(src.Pop());
+                    }
+                    //else do nothing, just let the GC collect the rest
+                }
             }
         }
     }
